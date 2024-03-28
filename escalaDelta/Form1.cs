@@ -44,27 +44,56 @@ namespace escalaDelta {
 
         public DateOnly dataProximaEscala { get; set; }
 
+        private ListBox listBoxOrigem;
+
+
         public Form1() {
             InitializeComponent();
 
             CriarBancoDados();
             loadColaboradores();
 
-            refreshDatas();
+            //configuração listbox
+            listBoxTrabalha.AllowDrop = true;
+            listBoxFolga.AllowDrop = true;
+            listBoxOutros.AllowDrop = true;
+            listBoxTrabalha.DisplayMember = "Nome";
+            listBoxFolga.DisplayMember = "Nome";
+            listBoxOutros.DisplayMember = "Nome";
 
-            // Configurando o CheckedListBox
-            foreach (var colaborador in colaboradores) {
-                checkedListBox1TrabalhaHoje.Items.Add(colaborador.Nome, colaborador.TrabalhaHoje);
-            }
+            //atualiza a propriedade Trabalha de cada colaborador de acordo com a ultima folga
+            refreshDatas();            
         }
 
         private void refreshDatas() {
             loadUltimasEscalasDataGridView();
-            buscarDataUltimaEscalaGerada();
-            loadAndProcessFilasRecent();
+            DateOnly dataProxEscala = buscarDataUltimaEscalaGerada();
+            //passar datas por parametro. +mais controle;
+            definirColaboraderesAusenteFolga();
+            definirColaboradoresAusenteOutros();
+            popularListsBoxes();
+
+            loadSetUpQueueATLandPIER();
             definirEscalaHojeEAtualizarProximaEscalaFutura();
-            atualizarLabelFilasPresent();
-            atualizarLabelFuturasFilas();
+            atualizarRithTextBoxFilasPresent();
+            atualizarRichTextBoxFuturasFilas();
+            PintarTrabalhadoresENaoTrabalhadores();
+        }
+
+        private void popularListsBoxes() {
+            // Configurando o listboxes
+            listBoxTrabalha.Items.Clear();
+            listBoxFolga.Items.Clear();
+            listBoxOutros.Items.Clear();
+            foreach (var colaborador in colaboradores) {
+                if (colaborador.NaoTrabalhaPorOutrosMotivos) {
+                    listBoxOutros.Items.Add(colaborador);
+                } else if (colaborador.Folga) {
+                    listBoxFolga.Items.Add(colaborador);
+                } else {
+                    listBoxTrabalha.Items.Add(colaborador);
+                }
+            }
         }
 
         private void configurePropertiesDataGridView(DataGridView dgv) {
@@ -97,47 +126,130 @@ namespace escalaDelta {
             dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
         }
 
+        private void definirColaboradoresAusenteOutros() {
+            foreach (Colaborador colaborador in colaboradores) {
+                using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
+                    connection.Open();
+                    string query = $"select local_trabalho from ColaboradorTrabalho where id_colaborador = {colaborador.Id} order by data desc limit 1";
+                    using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
+                        string ultimoLocalTrabalho = (string)command.ExecuteScalar();
+                        colaborador.NaoTrabalhaPorOutrosMotivos = ultimoLocalTrabalho == "OUTROS";
+                    }
+                }
+            }
+        }
+
+        private void definirColaboraderesAusenteFolga() {
+            //verificar quem folga na escala a ser gerada
+            foreach (Colaborador colaborador in colaboradores) {
+                DateOnly ultima_f;
+                DateOnly penult_f;
+                List<Colaborador> col_folgaram_antes_penult_f = new List<Colaborador>();
+
+                using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
+                    connection.Open();
+                    string query1 = $"select * from ColaboradorTrabalho where local_trabalho = 'FOLGA' and id_colaborador = {colaborador.Id} order by data desc limit 3;";
+                    using (SQLiteCommand command = new SQLiteCommand(query1, connection)) {
+                        SQLiteDataReader reader = command.ExecuteReader();
+                        if (reader.Read()) { ultima_f = DateOnly.FromDateTime((DateTime)reader["data"]); }
+                        if (reader.Read()) { penult_f = DateOnly.FromDateTime((DateTime)reader["data"]); }
+
+                        reader.Close();
+                        string query2 = $"select * from ColaboradorTrabalho where local_trabalho = 'FOLGA' and data = '{penult_f.AddDays(-1).ToString("yyyy-MM-dd")}'";
+                        command.CommandText = query2;
+                        reader = command.ExecuteReader();
+                        while (reader.Read()) {
+                            Colaborador col_f_a_p_f = new Colaborador();
+                            col_f_a_p_f.Id = Convert.ToInt32(reader["id_colaborador"]);
+                            col_folgaram_antes_penult_f.Add(col_f_a_p_f);
+                        }
+                        reader.Close();
+                    }
+                }
+
+                if (col_folgaram_antes_penult_f.Count == 0) {
+                    //não tem registros, não da pra saber se a prox é dobrada ou não
+                    continue;
+                }
+
+                int diferencaDiasEntre2ultimasFolgas = ultima_f.DayNumber - penult_f.DayNumber;
+
+                if (ultima_f == dataProximaEscala) {
+                    colaborador.Folga = true;
+                } else {
+                    if (diferencaDiasEntre2ultimasFolgas <= 1) {
+                        DateOnly prox_f = ultima_f.AddDays(7);
+                        if (prox_f == dataProximaEscala) {
+                            colaborador.Folga = true;
+                        } else {
+                            colaborador.Folga = false;
+                        }
+                    } else if (diferencaDiasEntre2ultimasFolgas == 7) {
+                        bool folgou_dia_antes_penultima_folga = col_folgaram_antes_penult_f.Any(c => c.Id == colaborador.Id);
+                        if (folgou_dia_antes_penultima_folga) {
+                            DateOnly prox_f = ultima_f.AddDays(7);
+                            if (prox_f == dataProximaEscala) {
+                                colaborador.Folga = true;
+                            } else {
+                                colaborador.Folga = false;
+                            }
+                        } else {
+                            colaborador.Folga = true;
+                        }
+                    }
+                }
+            };
+        }
+
         private void definirEscalaHojeEAtualizarProximaEscalaFutura() {
+
             //deve ter ao menos 1 colaborador de 6h no ATL e JFK
+            PIER_work = null;
             ATL_work = new List<Colaborador>();
             JFK_work = new List<Colaborador>();
 
             fila_PIER_Future = fila_PIER_Present.ToList();
             fila_ATL_Future = fila_ATL_Present.ToList();
 
-            Colaborador? HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.TrabalhaHoje && c.HorasTrabalho == 6);
+                        
+            var todosDe6hQueTrabalhara = colaboradores.Where(c => c.Trabalha && c.HorasTrabalho == 6);
+            Colaborador? HojeATLde6h = null;
+            Colaborador? HojeJFKde6h;
+
+            if (todosDe6hQueTrabalhara.Count() > 2) {
+                //se ao menos 3 de 6h trabalharao, definir primeiro o pier Justamente.
+                PIER_work = fila_PIER_Present.First(c => c.Trabalha);
+                HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != PIER_work.Nome);
+                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h.Nome && c.Nome != PIER_work.Nome);
+            } else {
+                HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6);
+                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h.Nome);
+                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha && c.Nome != HojeATLde6h.Nome && c.Nome != HojeJFKde6h.Nome);
+            }
             if (HojeATLde6h != null)
                 ATL_work.Add(HojeATLde6h);
-
-            Colaborador HojeJFKde6h;
-            //se tiver mais de 2 cara de 6h, definir o pier de forma justa e jogar o outro no JFK
-            if (colaboradores.Where(c => c.TrabalhaHoje && c.HorasTrabalho == 6).Count() > 2) {
-                PIER_work = fila_PIER_Future.First(c => c.TrabalhaHoje && !ATL_work.Contains(c));
-                //b.o aqui duplicando rubbens
-                HojeJFKde6h = fila_ATL_Future.Last(c => c.TrabalhaHoje && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h.Nome && c.Nome != PIER_work.Nome);
-            } else { //senao joga o que sobrou no JFK e o pier é o proximo da fila que nao seja ele.
-                HojeJFKde6h = fila_ATL_Future.Last(c => c.TrabalhaHoje && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h.Nome);
-                PIER_work = fila_PIER_Future.First(c => c.TrabalhaHoje && !ATL_work.Contains(c) && c.Nome != HojeJFKde6h.Nome);
-            }
-            JFK_work.Add(HojeJFKde6h);
+            if (HojeJFKde6h != null)
+                JFK_work.Add(HojeJFKde6h);
 
             //se tiver alguem que trabalha depois da 19h, só fara o pier ou 104
             var colaboradorQueEntraApos19hDisponivel = colaboradores.Where(c =>
-                c.Entrada.Value.Hour >= 19 &&
-                c.TrabalhaHoje &&
-                c.Nome != PIER_work.Nome);
+                c.Entrada?.Hour >= 19 &&
+                c.Trabalha &&
+                c.Nome != PIER_work?.Nome);
 
             if (colaboradorQueEntraApos19hDisponivel.Count() == 1) {
                 ATL_work.Add(colaboradorQueEntraApos19hDisponivel.First());
             }
-
+            //calculo para dividir a equipe caso ultrapasse de 3 colaborador pra cada
+            int qtnTrabalhara = colaboradores.Count(c => c.Trabalha);
+            int qtdSobra = qtnTrabalhara % 2;
             //adiciona o restante da fila para trabalhar no voo 104 quem nao está no ATL, JFK e Pier
             var doisPrimeirosFilaATL = fila_ATL_Future.Where(c =>
-                c.TrabalhaHoje &&
-                c.Nome != HojeATLde6h.Nome &&
-                c.Nome != HojeJFKde6h.Nome &&
-                c.Nome != PIER_work.Nome
-                ).Take(2);
+                c.Trabalha &&
+                c.Nome != HojeATLde6h?.Nome &&
+                c.Nome != HojeJFKde6h?.Nome &&
+                c.Nome != PIER_work?.Nome
+                ).Take(((qtnTrabalhara - qtdSobra) / 2) - ATL_work.Count); //divisao de turma, caso impar ATL ficará 1 a mais.
             ATL_work.AddRange(doisPrimeirosFilaATL);
 
             // Movendo quem ta trabalhando no ATL para o final da fila ATL pela sequencia
@@ -148,12 +260,11 @@ namespace escalaDelta {
 
             //adiciona o restante pela sequencia para trabalhar no voo 226
             var sobra_JFK = fila_ATL_Future.Where(c =>
-            c.TrabalhaHoje &&
+            c.Trabalha &&
             c.Nome != HojeJFKde6h.Nome &&
             c.Nome != PIER_work.Nome &&
             !ATL_work.Contains(c)
             );
-
             JFK_work.AddRange(sobra_JFK);
             //o pier vai para o final da fila PIER
             fila_PIER_Future.Remove(PIER_work);
@@ -163,7 +274,7 @@ namespace escalaDelta {
             string saudacao = DateTime.Now.Hour < 12 ? "Bom dia" : (DateTime.Now.Hour < 18 ? "Boa tarde" : "Boa noite");
 
             string texto = $@"{saudacao} senhores.
-Escala de {DateTime.Now.ToString("dddd", new CultureInfo("pt-BR"))} {dataProximaEscala.ToString("dd/MM")}
+Escala de {dataProximaEscala.ToString("dddd", new CultureInfo("pt-BR"))} {dataProximaEscala.ToString("dd/MM")}
 Pier: 
   {PIER_work.Nome}
 226: 
@@ -173,36 +284,89 @@ Pier:
 ";
             rtxtProximaEscala.Text = texto;
 
-            atualizarLabelFuturasFilas();
+            atualizarRichTextBoxFuturasFilas();
 
         }
 
-        private void atualizarLabelFuturasFilas() {
+        private void atualizarRichTextBoxFuturasFilas() {
             rtxtFuturaFilaATL.Text = string.Join("\r\n", fila_ATL_Future.Select(c => c.Nome));
             rtxtFuturaFilaPIER.Text = string.Join("\r\n", fila_PIER_Future.Select(c => c.Nome));
         }
 
-        private void atualizarLabelFilasPresent() {
+        private void atualizarRithTextBoxFilasPresent() {
             richTextBoxFILAATL.Text = string.Join("\r\n", fila_ATL_Present.Select(c => c.Nome));
             richTextBoxFILAPIER.Text = string.Join("\r\n", fila_PIER_Present.Select(c => c.Nome));
         }
 
-        private void checkedListBox1TrabalhaHoje_ItemCheck(object sender, ItemCheckEventArgs e) {
-            // Atualizando a propriedade Ativo da Pessoa quando o estado do item é alterado
-            if (e.Index >= 0 && e.Index < colaboradores.Count) {
-                bool trampaHoje = e.NewValue == CheckState.Checked;
-                colaboradores[e.Index].TrabalhaHoje = trampaHoje;
-                if (!trampaHoje) {
-                    HighlightSearchText(colaboradores[e.Index].Nome, richTextBoxFILAATL, Color.Red);
-                    HighlightSearchText(colaboradores[e.Index].Nome, richTextBoxFILAPIER, Color.Red);
+        private void ListBox_DragEnter(object sender, DragEventArgs e) {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        // Evento DragDrop para todos os ListBoxes
+        private void ListBox_DragDrop(object sender, DragEventArgs e) {
+            ListBox listBoxDestino = sender as ListBox;
+            Colaborador colaboradorItem = e.Data.GetData(typeof(Colaborador)) as Colaborador;                      
+
+            // Move o item da ListBox de origem para a ListBox de destino
+            listBoxOrigem.Items.Remove(colaboradorItem);
+            listBoxDestino.Items.Add(colaboradorItem);
+
+
+            colaboradorItem.Folga = listBoxDestino == listBoxFolga;
+            colaboradorItem.NaoTrabalhaPorOutrosMotivos = listBoxDestino == listBoxOutros;
+            PintarTrabalhadoresENaoTrabalhadores();
+            definirEscalaHojeEAtualizarProximaEscalaFutura();
+
+        }
+
+        // Evento MouseDown para iniciar o arrastar para todos os ListBoxes
+        private void listBox_MouseDown(object sender, MouseEventArgs e) {
+            ListBox listBox = sender as ListBox;
+            int index = listBox.IndexFromPoint(e.X, e.Y);
+            if (index != ListBox.NoMatches) {
+                object selectedItem = listBox.Items[index];
+
+                // Armazena a ListBox de origem
+                listBoxOrigem = listBox;
+
+                // Define os dados de arrastar e soltar
+                listBox.DoDragDrop(selectedItem, DragDropEffects.Move);
+            }
+        }
+
+        private void listBoxFolga_SelectedIndexChanged(object sender, EventArgs e) {
+            //MessageBox.Show("SelectedIndexChanged");
+            
+        }
+
+        private void PintarTrabalhadoresENaoTrabalhadores() {
+            foreach (Colaborador colaborador in colaboradores) {
+                if (colaborador.Trabalha) {
+                    HighlightSearchText(colaborador.Nome, richTextBoxFILAATL, richTextBoxFILAPIER.ForeColor);
+                    HighlightSearchText(colaborador.Nome, richTextBoxFILAPIER, richTextBoxFILAPIER.ForeColor);
                 } else {
-                    HighlightSearchText(colaboradores[e.Index].Nome, richTextBoxFILAATL, richTextBoxFILAPIER.ForeColor);
-                    HighlightSearchText(colaboradores[e.Index].Nome, richTextBoxFILAPIER, richTextBoxFILAPIER.ForeColor);
+                    HighlightSearchText(colaborador.Nome, richTextBoxFILAATL, Color.Red);
+                    HighlightSearchText(colaborador.Nome, richTextBoxFILAPIER, Color.Red);
                 }
             }
-
-            definirEscalaHojeEAtualizarProximaEscalaFutura();
         }
+
+        //private void checkedListBox1TrabalhaHoje_ItemCheck(object sender, ItemCheckEventArgs e) {
+        //    // Atualizando a propriedade Ativo da Pessoa quando o estado do item é alterado
+        //    if (e.Index >= 0 && e.Index < colaboradores.Count) {
+        //        bool trampaHoje = e.NewValue == CheckState.Checked;
+        //        colaboradores[e.Index].Trabalha = trampaHoje;
+        //        if (!trampaHoje) {
+        //            HighlightSearchText(colaboradores[e.Index].Nome, richTextBoxFILAATL, Color.Red);
+        //            HighlightSearchText(colaboradores[e.Index].Nome, richTextBoxFILAPIER, Color.Red);
+        //        } else {
+        //            HighlightSearchText(colaboradores[e.Index].Nome, richTextBoxFILAATL, richTextBoxFILAPIER.ForeColor);
+        //            HighlightSearchText(colaboradores[e.Index].Nome, richTextBoxFILAPIER, richTextBoxFILAPIER.ForeColor);
+        //        }
+        //    }
+
+        //    definirEscalaHojeEAtualizarProximaEscalaFutura();
+        //}
 
         private void cadastrarFuncionarioToolStripMenuItem_Click(object sender, EventArgs e) {
             FormColaborador frmColaborador = new FormColaborador();
@@ -243,7 +407,7 @@ Pier:
                                 colaborador.Nome = (string)reader["nome"];
                                 colaborador.Entrada = new TimeOnly(entrada.Hour, entrada.Minute);
                                 colaborador.Saida = new TimeOnly(saida.Hour, saida.Minute);
-                                colaborador.UltimoDiaFolga = new DateOnly(ultimoDiaFolga.Year, ultimoDiaFolga.Month, ultimoDiaFolga.Day);
+                                //colaborador.UltimoDiaFolga = new DateOnly(ultimoDiaFolga.Year, ultimoDiaFolga.Month, ultimoDiaFolga.Day);
 
                                 colaboradores.Add(colaborador);
                             }
@@ -258,8 +422,6 @@ Pier:
 
         private void loadUltimasEscalasDataGridView() {
             configurePropertiesDataGridView(dataGridView1);
-
-
 
             DataTable dataTable = new DataTable();
             try {
@@ -283,11 +445,12 @@ Pier:
                                 strftime('%d/%m/%Y', ct.data) AS Data,
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'PIER' THEN c.nome ELSE NULL END) AS PIER,
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'ATL' THEN ' ' || c.nome  ELSE NULL END) AS ATL,
-                                GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'JFK' THEN ' ' || c.nome ELSE NULL END) AS JFK
+                                GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'JFK' THEN ' ' || c.nome ELSE NULL END) AS JFK,
+                                GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'FOLGA' THEN c.nome  ELSE NULL END) AS FOLGA
                             FROM 
                                 ColaboradorTrabalho ct
                             LEFT JOIN 
-                                Colaborador c ON ct.id_colaborador = c.id
+                                Colaborador c ON ct.id_colaborador = c.id                           
                             GROUP BY 
                                 DATE(ct.data)
                             ORDER BY 
@@ -311,7 +474,8 @@ Pier:
                                    ("Data", 12),
                                    ("PIER", 12),
                                    ("ATL", 30),
-                                   ("JFK", 30)
+                                   ("JFK", 30),
+                                   ("FOLGA", 25)
                                );
                 }
             } catch (Exception ex) {
@@ -321,7 +485,7 @@ Pier:
 
 
         //Define a fila recente com base nos ultimos registros.
-        private void loadAndProcessFilasRecent() {
+        private void loadSetUpQueueATLandPIER() {
             fila_ATL_Present = colaboradores.ToList();
             fila_PIER_Present = colaboradores.ToList();
             try {
@@ -378,7 +542,8 @@ Pier:
                     "nome TEXT," +
                     "hora_entrada DATETIME," +
                     "hora_saida DATETIME," +
-                    "ultimo_dia_folga DATE)", conexao)) {
+                    "ultimo_dia_folga DATE," +
+                    "penultima_folga DATE)", conexao)) {
                     cmd.ExecuteNonQuery();
                 }
 
@@ -429,7 +594,7 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, ultimo_di
 
         private void InserirEscala() {
             DateOnly dataUltimaEscalaGerada = buscarDataUltimaEscalaGerada();
-            DateOnly dataProximaEscala = dataUltimaEscalaGerada.AddDays(1);
+            dataProximaEscala = dataUltimaEscalaGerada.AddDays(1);
 
             using (var conexao = new SQLiteConnection(connectionString)) {
                 conexao.Open();
@@ -457,6 +622,22 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, ultimo_di
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@idColaborador", colaboradorTrabalhou.Id);
                         cmd.Parameters.AddWithValue("@localTrabalho", "JFK");
+                        cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    foreach (Colaborador colaborador in listBoxFolga.Items) {
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
+                        cmd.Parameters.AddWithValue("@localTrabalho", "FOLGA");
+                        cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    foreach (Colaborador colaborador in listBoxOutros.Items) {
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
+                        cmd.Parameters.AddWithValue("@localTrabalho", "OUTROS");
                         cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                         cmd.ExecuteNonQuery();
                     }
@@ -540,9 +721,9 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, ultimo_di
                 string query = $"DELETE FROM ColaboradorTrabalho WHERE data = @data";
                 using (var cmd = new SQLiteCommand(query, conexao)) {
                     foreach (var dataEscala in datasSelecionadas) {
-                            cmd.Parameters.Clear();
-                            cmd.Parameters.AddWithValue("@data", dataEscala.ToString("yyyy-MM-dd"));
-                            cmd.ExecuteNonQuery();                       
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@data", dataEscala.ToString("yyyy-MM-dd"));
+                        cmd.ExecuteNonQuery();
                     }
                 }
                 refreshDatas();

@@ -11,9 +11,9 @@ namespace escalaDelta {
         public string Nome { get; set; }        
         public TimeOnly? Entrada { get; set; }
         public TimeOnly? Saida { get; set; }
-        public DateOnly UltimoDiaFolga { get; set; }
-
-        public bool TrabalhaHoje { get; set; } = true;
+        public bool Folga { get; set; }
+        public bool NaoTrabalhaPorOutrosMotivos { get; set; }
+        public bool Trabalha => VerificaSeTrabalha();
         public int HorasTrabalho => CalcularHorasTrabalho(); // Propriedade de apenas leitura para calcular as horas de trabalho
 
 
@@ -22,7 +22,10 @@ namespace escalaDelta {
         }
         public Colaborador(string nome, int horasTrabalho) {
             Nome = nome;
-            TrabalhaHoje = true;
+        }
+
+        public bool VerificaSeTrabalha() {
+            return !(Folga || NaoTrabalhaPorOutrosMotivos);
         }
 
         // Método para calcular as horas de trabalho

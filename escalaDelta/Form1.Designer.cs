@@ -24,7 +24,6 @@
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.checkedListBox1TrabalhaHoje = new System.Windows.Forms.CheckedListBox();
             this.lblInfoCheckbox = new System.Windows.Forms.Label();
             this.btnSalvarEscala = new System.Windows.Forms.Button();
             this.lblFilaAtl = new System.Windows.Forms.Label();
@@ -49,21 +48,17 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.listBoxFolga = new System.Windows.Forms.ListBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.listBoxOutros = new System.Windows.Forms.ListBox();
+            this.listBoxTrabalha = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // checkedListBox1TrabalhaHoje
-            // 
-            this.checkedListBox1TrabalhaHoje.FormattingEnabled = true;
-            this.checkedListBox1TrabalhaHoje.Location = new System.Drawing.Point(245, 143);
-            this.checkedListBox1TrabalhaHoje.Name = "checkedListBox1TrabalhaHoje";
-            this.checkedListBox1TrabalhaHoje.Size = new System.Drawing.Size(108, 184);
-            this.checkedListBox1TrabalhaHoje.TabIndex = 1;
-            this.checkedListBox1TrabalhaHoje.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox1TrabalhaHoje_ItemCheck);
             // 
             // lblInfoCheckbox
             // 
@@ -76,7 +71,7 @@
             // 
             // btnSalvarEscala
             // 
-            this.btnSalvarEscala.Location = new System.Drawing.Point(357, 333);
+            this.btnSalvarEscala.Location = new System.Drawing.Point(519, 333);
             this.btnSalvarEscala.Name = "btnSalvarEscala";
             this.btnSalvarEscala.Size = new System.Drawing.Size(160, 23);
             this.btnSalvarEscala.TabIndex = 3;
@@ -107,7 +102,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(390, 102);
+            this.label4.Location = new System.Drawing.Point(552, 102);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(88, 15);
             this.label4.TabIndex = 7;
@@ -152,7 +147,7 @@
             this.cadastrarFuncionarioToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(760, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(918, 24);
             this.menuStrip1.TabIndex = 20;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -232,7 +227,7 @@
             // rtxtProximaEscala
             // 
             this.rtxtProximaEscala.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.rtxtProximaEscala.Location = new System.Drawing.Point(357, 125);
+            this.rtxtProximaEscala.Location = new System.Drawing.Point(519, 125);
             this.rtxtProximaEscala.Name = "rtxtProximaEscala";
             this.rtxtProximaEscala.Size = new System.Drawing.Size(160, 199);
             this.rtxtProximaEscala.TabIndex = 27;
@@ -270,7 +265,7 @@
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.rtxtFuturaFilaPIER);
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox2.Location = new System.Drawing.Point(523, 102);
+            this.groupBox2.Location = new System.Drawing.Point(685, 102);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(220, 222);
             this.groupBox2.TabIndex = 30;
@@ -300,6 +295,7 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.BackColor = System.Drawing.Color.DarkGreen;
             this.label1.Location = new System.Drawing.Point(664, 582);
             this.label1.Name = "label1";
@@ -308,6 +304,7 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(687, 582);
             this.label3.Name = "label3";
@@ -315,11 +312,74 @@
             this.label3.TabIndex = 34;
             this.label3.Text = "Futuro";
             // 
+            // listBoxFolga
+            // 
+            this.listBoxFolga.AllowDrop = true;
+            this.listBoxFolga.FormattingEnabled = true;
+            this.listBoxFolga.ItemHeight = 15;
+            this.listBoxFolga.Location = new System.Drawing.Point(358, 143);
+            this.listBoxFolga.Name = "listBoxFolga";
+            this.listBoxFolga.Size = new System.Drawing.Size(153, 94);
+            this.listBoxFolga.TabIndex = 35;
+            this.listBoxFolga.SelectedIndexChanged += new System.EventHandler(this.listBoxFolga_SelectedIndexChanged);
+            this.listBoxFolga.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_DragDrop);
+            this.listBoxFolga.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
+            this.listBoxFolga.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseDown);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(358, 125);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(39, 15);
+            this.label5.TabIndex = 36;
+            this.label5.Text = "Folga:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(358, 240);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(153, 15);
+            this.label6.TabIndex = 37;
+            this.label6.Text = "Outros(ferias,atestado,falta)";
+            // 
+            // listBoxOutros
+            // 
+            this.listBoxOutros.AllowDrop = true;
+            this.listBoxOutros.FormattingEnabled = true;
+            this.listBoxOutros.ItemHeight = 15;
+            this.listBoxOutros.Location = new System.Drawing.Point(359, 263);
+            this.listBoxOutros.Name = "listBoxOutros";
+            this.listBoxOutros.Size = new System.Drawing.Size(152, 64);
+            this.listBoxOutros.TabIndex = 38;
+            this.listBoxOutros.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_DragDrop);
+            this.listBoxOutros.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
+            this.listBoxOutros.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseDown);
+            // 
+            // listBoxTrabalha
+            // 
+            this.listBoxTrabalha.AllowDrop = true;
+            this.listBoxTrabalha.FormattingEnabled = true;
+            this.listBoxTrabalha.ItemHeight = 15;
+            this.listBoxTrabalha.Location = new System.Drawing.Point(245, 145);
+            this.listBoxTrabalha.Name = "listBoxTrabalha";
+            this.listBoxTrabalha.Size = new System.Drawing.Size(107, 184);
+            this.listBoxTrabalha.TabIndex = 39;
+            this.listBoxTrabalha.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_DragDrop);
+            this.listBoxTrabalha.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
+            this.listBoxTrabalha.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseDown);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(760, 611);
+            this.ClientSize = new System.Drawing.Size(918, 611);
+            this.Controls.Add(this.listBoxTrabalha);
+            this.Controls.Add(this.listBoxOutros);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.listBoxFolga);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridView1);
@@ -334,7 +394,6 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.btnSalvarEscala);
             this.Controls.Add(this.lblInfoCheckbox);
-            this.Controls.Add(this.checkedListBox1TrabalhaHoje);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
@@ -354,8 +413,6 @@
         }
 
         #endregion
-
-        private CheckedListBox checkedListBox1TrabalhaHoje;
         private Label lblInfoCheckbox;
         private Button btnSalvarEscala;
         private Label lblFilaAtl;
@@ -380,5 +437,10 @@
         private PictureBox pictureBox1;
         private Label label1;
         private Label label3;
+        private ListBox listBoxFolga;
+        private Label label5;
+        private Label label6;
+        private ListBox listBoxOutros;
+        private ListBox listBoxTrabalha;
     }
 }
