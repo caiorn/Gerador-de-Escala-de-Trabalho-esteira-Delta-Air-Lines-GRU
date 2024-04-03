@@ -1,3 +1,4 @@
+using escalaDelta.Utils;
 using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
@@ -61,8 +62,21 @@ namespace escalaDelta {
             listBoxFolga.DisplayMember = "Nome";
             listBoxOutros.DisplayMember = "Nome";
 
+            ExtensionsDataGridView.configurePropertiesDataGridView(dataGridView1);
+
             //atualiza a propriedade Trabalha de cada colaborador de acordo com a ultima folga
-            refreshDatas();            
+            refreshDatas();
+            //Após carregar os dados no datagrid view definindo largura colunas
+            dataGridView1.Columns["Data"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.Columns["Data"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.DefinirTamanhoPercentualColunasModeFILL(
+                           ("Dia", 8),
+                           ("Data", 12),
+                           ("PIER", 12),
+                           ("ATL", 30),
+                           ("JFK", 30),
+                           ("FOLGA", 25)
+           );
         }
 
         private void refreshDatas() {
@@ -95,36 +109,7 @@ namespace escalaDelta {
                 }
             }
         }
-
-        private void configurePropertiesDataGridView(DataGridView dgv) {
-            // Oculta a coluna de cabeçalho de linha (seletor)
-            dgv.RowHeadersVisible = false;
-            // Definir a altura das linhas
-            dgv.RowTemplate.Height = 20; // Altere para a altura desejada
-            // Dados preencher todo espaço do grid
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            // Não permitir alterar a altura das linhas
-            dgv.AllowUserToResizeRows = false;
-
-            dgv.ReadOnly = true;
-            dgv.AllowUserToAddRows = false;
-            dgv.AllowUserToDeleteRows = false;
-            dgv.AllowUserToOrderColumns = true;
-
-            // Definir o estilo de célula para cabeçalhos em negrito
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font(dgv.Font, FontStyle.Bold);
-
-
-            // Definir o estilo de célula para linhas com cores alternadas
-            dgv.RowsDefaultCellStyle.BackColor = Color.LightGray;
-            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.White;
-
-            // Definir a cor da borda do DataGridView
-            dgv.GridColor = Color.LightGray;
-
-            // Definir o estilo de borda para células
-            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-        }
+                
 
         private void definirColaboradoresAusenteOutros() {
             foreach (Colaborador colaborador in colaboradores) {
@@ -220,11 +205,11 @@ namespace escalaDelta {
                 //se ao menos 3 de 6h trabalharao, definir primeiro o pier Justamente.
                 PIER_work = fila_PIER_Present.First(c => c.Trabalha);
                 HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != PIER_work.Nome);
-                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h.Nome && c.Nome != PIER_work.Nome);
+                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome && c.Nome != PIER_work.Nome);
             } else {
                 HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6);
-                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h.Nome);
-                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha && c.Nome != HojeATLde6h.Nome && c.Nome != HojeJFKde6h.Nome);
+                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome);
+                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha && c.Nome != HojeATLde6h?.Nome && c.Nome != HojeJFKde6h?.Nome);
             }
             if (HojeATLde6h != null)
                 ATL_work.Add(HojeATLde6h);
@@ -235,7 +220,7 @@ namespace escalaDelta {
             var colaboradorQueEntraApos19hDisponivel = colaboradores.Where(c =>
                 c.Entrada?.Hour >= 19 &&
                 c.Trabalha &&
-                c.Nome != PIER_work?.Nome);
+                c.Nome != PIER_work.Nome);
 
             if (colaboradorQueEntraApos19hDisponivel.Count() == 1) {
                 ATL_work.Add(colaboradorQueEntraApos19hDisponivel.First());
@@ -261,7 +246,7 @@ namespace escalaDelta {
             //adiciona o restante pela sequencia para trabalhar no voo 226
             var sobra_JFK = fila_ATL_Future.Where(c =>
             c.Trabalha &&
-            c.Nome != HojeJFKde6h.Nome &&
+            c.Nome != HojeJFKde6h?.Nome &&
             c.Nome != PIER_work.Nome &&
             !ATL_work.Contains(c)
             );
@@ -273,8 +258,8 @@ namespace escalaDelta {
 
             string saudacao = DateTime.Now.Hour < 12 ? "Bom dia" : (DateTime.Now.Hour < 18 ? "Boa tarde" : "Boa noite");
 
-            string texto = $@"{saudacao} senhores.
-Escala de {dataProximaEscala.ToString("dddd", new CultureInfo("pt-BR"))} {dataProximaEscala.ToString("dd/MM")}
+            string texto =
+$@"Escala de {dataProximaEscala.ToString("ddd", new CultureInfo("pt-BR"))} {dataProximaEscala.ToString("dd/MM")}
 Pier: 
   {PIER_work.Nome}
 226: 
@@ -421,8 +406,6 @@ Pier:
         }
 
         private void loadUltimasEscalasDataGridView() {
-            configurePropertiesDataGridView(dataGridView1);
-
             DataTable dataTable = new DataTable();
             try {
                 using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
@@ -466,17 +449,7 @@ Pier:
                     // Fechar a conexão com o banco de dados
                     connection.Close();
 
-                    dataGridView1.DataSource = dataTable;
-                    dataGridView1.Columns["Data"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    dataGridView1.Columns["Data"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    DefinirTamanhoPercentualColunasModeFILL(dataGridView1,
-                                   ("Dia", 8),
-                                   ("Data", 12),
-                                   ("PIER", 12),
-                                   ("ATL", 30),
-                                   ("JFK", 30),
-                                   ("FOLGA", 25)
-                               );
+                    dataGridView1.DataSource = dataTable;                    
                 }
             } catch (Exception ex) {
                 MessageBox.Show("Ocorreu um erro ao obter os dados dos colaboradores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -665,18 +638,7 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, ultimo_di
                     refreshDatas();
                 }
             }
-        }
-
-        public void DefinirTamanhoPercentualColunasModeFILL(DataGridView dataGridView, params (string columnName, int percent)[] colunas) {
-            //dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            foreach (var coluna in colunas) {
-                if (dataGridView.Columns.Contains(coluna.columnName)) {
-                    var dgvColumn = dataGridView.Columns[coluna.columnName];
-                    dgvColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                    dgvColumn.FillWeight = coluna.percent;
-                }
-            }
-        }
+        }       
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
             // Verifica se a célula atual pertence à coluna de data (substitua "DataColumnIndex" pelo índice da sua coluna de data)

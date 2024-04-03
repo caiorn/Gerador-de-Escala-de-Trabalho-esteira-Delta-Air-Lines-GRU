@@ -1,4 +1,5 @@
-﻿using System;
+﻿using escalaDelta.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,8 +16,20 @@ namespace escalaDelta {
     public partial class FormColaborador : Form {
         public FormColaborador() {
             InitializeComponent();
+            ExtensionsDataGridView.configurePropertiesDataGridView(dgvColaboradores);
+            dgvColaboradores.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            dgvColaboradores.MultiSelect = false;
 
             dgvColaboradores.DataSource =  ObterDadosColaboradores();
+            //Após carregar os dados no datagrid view definindo largura colunas
+            dgvColaboradores.Columns["Entrada"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvColaboradores.Columns["Saída"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvColaboradores.DefinirTamanhoPercentualColunasModeFILL(
+                           ("Cód", 5),
+                           ("Nome", 20),
+                           ("Entrada", 10),
+                           ("Saída", 10)
+                           );
         }
 
         private DataTable ObterDadosColaboradores() {
@@ -27,7 +40,7 @@ namespace escalaDelta {
                     connection.Open();
 
                     // Comando SQL para selecionar todos os colaboradores
-                    string query = "SELECT * FROM Colaborador";
+                    string query = "SELECT id AS [Cód], nome AS [Nome], hora_entrada as [Entrada], hora_saida as [Saída]  FROM Colaborador";
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {

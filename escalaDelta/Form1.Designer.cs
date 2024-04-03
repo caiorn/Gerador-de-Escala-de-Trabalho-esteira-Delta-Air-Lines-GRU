@@ -63,17 +63,17 @@
             // lblInfoCheckbox
             // 
             this.lblInfoCheckbox.AutoSize = true;
-            this.lblInfoCheckbox.Location = new System.Drawing.Point(245, 102);
+            this.lblInfoCheckbox.Location = new System.Drawing.Point(224, 77);
             this.lblInfoCheckbox.Name = "lblInfoCheckbox";
-            this.lblInfoCheckbox.Size = new System.Drawing.Size(120, 15);
+            this.lblInfoCheckbox.Size = new System.Drawing.Size(90, 30);
             this.lblInfoCheckbox.TabIndex = 2;
-            this.lblInfoCheckbox.Text = "Quem Trabalha Hoje?";
+            this.lblInfoCheckbox.Text = "Quem Trabalha \r\nHoje?";
             // 
             // btnSalvarEscala
             // 
-            this.btnSalvarEscala.Location = new System.Drawing.Point(519, 333);
+            this.btnSalvarEscala.Location = new System.Drawing.Point(416, 273);
             this.btnSalvarEscala.Name = "btnSalvarEscala";
-            this.btnSalvarEscala.Size = new System.Drawing.Size(160, 23);
+            this.btnSalvarEscala.Size = new System.Drawing.Size(110, 23);
             this.btnSalvarEscala.TabIndex = 3;
             this.btnSalvarEscala.Text = "OK (Salvar)";
             this.btnSalvarEscala.UseVisualStyleBackColor = true;
@@ -83,7 +83,7 @@
             // 
             this.lblFilaAtl.AutoSize = true;
             this.lblFilaAtl.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.lblFilaAtl.Location = new System.Drawing.Point(38, 23);
+            this.lblFilaAtl.Location = new System.Drawing.Point(29, 23);
             this.lblFilaAtl.Name = "lblFilaAtl";
             this.lblFilaAtl.Size = new System.Drawing.Size(29, 17);
             this.lblFilaAtl.TabIndex = 4;
@@ -93,7 +93,7 @@
             // 
             this.lblFilaPier.AutoSize = true;
             this.lblFilaPier.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.lblFilaPier.Location = new System.Drawing.Point(141, 23);
+            this.lblFilaPier.Location = new System.Drawing.Point(122, 23);
             this.lblFilaPier.Name = "lblFilaPier";
             this.lblFilaPier.Size = new System.Drawing.Size(35, 17);
             this.lblFilaPier.TabIndex = 5;
@@ -102,16 +102,16 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(552, 102);
+            this.label4.Location = new System.Drawing.Point(416, 74);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(88, 15);
+            this.label4.Size = new System.Drawing.Size(86, 15);
             this.label4.TabIndex = 7;
-            this.label4.Text = "Texto p/ Copiar";
+            this.label4.Text = "Proxima Escala";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(17, 340);
+            this.label7.Location = new System.Drawing.Point(20, 299);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(102, 15);
             this.label7.TabIndex = 17;
@@ -123,10 +123,10 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(20, 358);
+            this.dataGridView1.Location = new System.Drawing.Point(20, 317);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(723, 210);
+            this.dataGridView1.Size = new System.Drawing.Size(712, 251);
             this.dataGridView1.TabIndex = 18;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             // 
@@ -147,7 +147,7 @@
             this.cadastrarFuncionarioToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(918, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(761, 24);
             this.menuStrip1.TabIndex = 20;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -165,7 +165,7 @@
             this.richTextBoxFILAATL.Location = new System.Drawing.Point(9, 44);
             this.richTextBoxFILAATL.Name = "richTextBoxFILAATL";
             this.richTextBoxFILAATL.ReadOnly = true;
-            this.richTextBoxFILAATL.Size = new System.Drawing.Size(92, 162);
+            this.richTextBoxFILAATL.Size = new System.Drawing.Size(80, 162);
             this.richTextBoxFILAATL.TabIndex = 21;
             this.richTextBoxFILAATL.Text = "Nome1\nNome2\n";
             // 
@@ -173,10 +173,10 @@
             // 
             this.richTextBoxFILAPIER.BackColor = System.Drawing.SystemColors.Control;
             this.richTextBoxFILAPIER.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBoxFILAPIER.Location = new System.Drawing.Point(107, 44);
+            this.richTextBoxFILAPIER.Location = new System.Drawing.Point(104, 44);
             this.richTextBoxFILAPIER.Name = "richTextBoxFILAPIER";
             this.richTextBoxFILAPIER.ReadOnly = true;
-            this.richTextBoxFILAPIER.Size = new System.Drawing.Size(88, 162);
+            this.richTextBoxFILAPIER.Size = new System.Drawing.Size(80, 162);
             this.richTextBoxFILAPIER.TabIndex = 22;
             this.richTextBoxFILAPIER.Text = "Nome1\nNome2\n";
             // 
@@ -185,10 +185,10 @@
             this.rtxtFuturaFilaPIER.BackColor = System.Drawing.SystemColors.Control;
             this.rtxtFuturaFilaPIER.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.rtxtFuturaFilaPIER.ForeColor = System.Drawing.Color.DarkGreen;
-            this.rtxtFuturaFilaPIER.Location = new System.Drawing.Point(118, 44);
+            this.rtxtFuturaFilaPIER.Location = new System.Drawing.Point(107, 44);
             this.rtxtFuturaFilaPIER.Name = "rtxtFuturaFilaPIER";
             this.rtxtFuturaFilaPIER.ReadOnly = true;
-            this.rtxtFuturaFilaPIER.Size = new System.Drawing.Size(88, 162);
+            this.rtxtFuturaFilaPIER.Size = new System.Drawing.Size(80, 162);
             this.rtxtFuturaFilaPIER.TabIndex = 26;
             this.rtxtFuturaFilaPIER.Text = "Nome1\nNome2\n";
             // 
@@ -197,10 +197,10 @@
             this.rtxtFuturaFilaATL.BackColor = System.Drawing.SystemColors.Control;
             this.rtxtFuturaFilaATL.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.rtxtFuturaFilaATL.ForeColor = System.Drawing.Color.DarkGreen;
-            this.rtxtFuturaFilaATL.Location = new System.Drawing.Point(16, 44);
+            this.rtxtFuturaFilaATL.Location = new System.Drawing.Point(11, 44);
             this.rtxtFuturaFilaATL.Name = "rtxtFuturaFilaATL";
             this.rtxtFuturaFilaATL.ReadOnly = true;
-            this.rtxtFuturaFilaATL.Size = new System.Drawing.Size(84, 162);
+            this.rtxtFuturaFilaATL.Size = new System.Drawing.Size(80, 162);
             this.rtxtFuturaFilaATL.TabIndex = 25;
             this.rtxtFuturaFilaATL.Text = "Nome1\nNome2\n";
             // 
@@ -208,28 +208,28 @@
             // 
             this.label8.AutoSize = true;
             this.label8.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.label8.Location = new System.Drawing.Point(112, 23);
+            this.label8.Location = new System.Drawing.Point(123, 24);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(94, 17);
+            this.label8.Size = new System.Drawing.Size(35, 17);
             this.label8.TabIndex = 24;
-            this.label8.Text = "Prox. Fila PIER";
+            this.label8.Text = "PIER";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.label9.Location = new System.Drawing.Point(12, 23);
+            this.label9.Location = new System.Drawing.Point(33, 24);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(88, 17);
+            this.label9.Size = new System.Drawing.Size(29, 17);
             this.label9.TabIndex = 23;
-            this.label9.Text = "Prox. Fila ATL";
+            this.label9.Text = "ATL";
             // 
             // rtxtProximaEscala
             // 
             this.rtxtProximaEscala.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.rtxtProximaEscala.Location = new System.Drawing.Point(519, 125);
+            this.rtxtProximaEscala.Location = new System.Drawing.Point(416, 95);
             this.rtxtProximaEscala.Name = "rtxtProximaEscala";
-            this.rtxtProximaEscala.Size = new System.Drawing.Size(160, 199);
+            this.rtxtProximaEscala.Size = new System.Drawing.Size(110, 171);
             this.rtxtProximaEscala.TabIndex = 27;
             this.rtxtProximaEscala.Text = "";
             // 
@@ -251,9 +251,9 @@
             this.groupBox1.Controls.Add(this.lblFilaPier);
             this.groupBox1.Controls.Add(this.richTextBoxFILAATL);
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox1.Location = new System.Drawing.Point(23, 102);
+            this.groupBox1.Location = new System.Drawing.Point(20, 71);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(207, 225);
+            this.groupBox1.Size = new System.Drawing.Size(198, 225);
             this.groupBox1.TabIndex = 29;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filas ATUAL";
@@ -265,28 +265,28 @@
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.rtxtFuturaFilaPIER);
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox2.Location = new System.Drawing.Point(685, 102);
+            this.groupBox2.Location = new System.Drawing.Point(532, 74);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(220, 222);
+            this.groupBox2.Size = new System.Drawing.Size(200, 222);
             this.groupBox2.TabIndex = 30;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Filas Futuras";
+            this.groupBox2.Text = "Prox. Fila FUTURA";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(61)))), ((int)(((byte)(121)))));
-            this.label2.Location = new System.Drawing.Point(267, 24);
+            this.label2.Location = new System.Drawing.Point(394, 27);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(227, 20);
+            this.label2.Size = new System.Drawing.Size(227, 31);
             this.label2.TabIndex = 31;
             this.label2.Text = "ESCALA AUXILIARES DE ESTEIRA";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(278, 47);
+            this.pictureBox1.Location = new System.Drawing.Point(179, 27);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(200, 31);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -317,9 +317,9 @@
             this.listBoxFolga.AllowDrop = true;
             this.listBoxFolga.FormattingEnabled = true;
             this.listBoxFolga.ItemHeight = 15;
-            this.listBoxFolga.Location = new System.Drawing.Point(358, 143);
+            this.listBoxFolga.Location = new System.Drawing.Point(320, 95);
             this.listBoxFolga.Name = "listBoxFolga";
-            this.listBoxFolga.Size = new System.Drawing.Size(153, 94);
+            this.listBoxFolga.Size = new System.Drawing.Size(90, 79);
             this.listBoxFolga.TabIndex = 35;
             this.listBoxFolga.SelectedIndexChanged += new System.EventHandler(this.listBoxFolga_SelectedIndexChanged);
             this.listBoxFolga.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_DragDrop);
@@ -329,7 +329,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(358, 125);
+            this.label5.Location = new System.Drawing.Point(320, 77);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(39, 15);
             this.label5.TabIndex = 36;
@@ -338,20 +338,20 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(358, 240);
+            this.label6.Location = new System.Drawing.Point(320, 177);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(153, 15);
+            this.label6.Size = new System.Drawing.Size(82, 30);
             this.label6.TabIndex = 37;
-            this.label6.Text = "Outros(ferias,atestado,falta)";
+            this.label6.Text = "Outros(ferias,\r\natestado,falta)";
             // 
             // listBoxOutros
             // 
             this.listBoxOutros.AllowDrop = true;
             this.listBoxOutros.FormattingEnabled = true;
             this.listBoxOutros.ItemHeight = 15;
-            this.listBoxOutros.Location = new System.Drawing.Point(359, 263);
+            this.listBoxOutros.Location = new System.Drawing.Point(320, 217);
             this.listBoxOutros.Name = "listBoxOutros";
-            this.listBoxOutros.Size = new System.Drawing.Size(152, 64);
+            this.listBoxOutros.Size = new System.Drawing.Size(90, 79);
             this.listBoxOutros.TabIndex = 38;
             this.listBoxOutros.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_DragDrop);
             this.listBoxOutros.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
@@ -362,9 +362,9 @@
             this.listBoxTrabalha.AllowDrop = true;
             this.listBoxTrabalha.FormattingEnabled = true;
             this.listBoxTrabalha.ItemHeight = 15;
-            this.listBoxTrabalha.Location = new System.Drawing.Point(245, 145);
+            this.listBoxTrabalha.Location = new System.Drawing.Point(224, 112);
             this.listBoxTrabalha.Name = "listBoxTrabalha";
-            this.listBoxTrabalha.Size = new System.Drawing.Size(107, 184);
+            this.listBoxTrabalha.Size = new System.Drawing.Size(90, 184);
             this.listBoxTrabalha.TabIndex = 39;
             this.listBoxTrabalha.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_DragDrop);
             this.listBoxTrabalha.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
@@ -374,7 +374,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(918, 611);
+            this.ClientSize = new System.Drawing.Size(761, 611);
             this.Controls.Add(this.listBoxTrabalha);
             this.Controls.Add(this.listBoxOutros);
             this.Controls.Add(this.label6);

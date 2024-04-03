@@ -33,12 +33,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.dateTimePickerHoraEntrada = new System.Windows.Forms.DateTimePicker();
             this.dateTimePickerHoraSaida = new System.Windows.Forms.DateTimePicker();
-            this.dgvEscala = new System.Windows.Forms.DataGridView();
             this.dgvColaboradores = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnNovo = new System.Windows.Forms.Button();
             this.btnEditar = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvEscala)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColaboradores)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -129,22 +127,13 @@
             this.dateTimePickerHoraSaida.Size = new System.Drawing.Size(158, 23);
             this.dateTimePickerHoraSaida.TabIndex = 10;
             // 
-            // dgvEscala
-            // 
-            this.dgvEscala.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvEscala.Location = new System.Drawing.Point(12, 377);
-            this.dgvEscala.Name = "dgvEscala";
-            this.dgvEscala.RowTemplate.Height = 25;
-            this.dgvEscala.Size = new System.Drawing.Size(663, 195);
-            this.dgvEscala.TabIndex = 11;
-            // 
             // dgvColaboradores
             // 
             this.dgvColaboradores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvColaboradores.Location = new System.Drawing.Point(12, 3);
             this.dgvColaboradores.Name = "dgvColaboradores";
             this.dgvColaboradores.RowTemplate.Height = 25;
-            this.dgvColaboradores.Size = new System.Drawing.Size(663, 140);
+            this.dgvColaboradores.Size = new System.Drawing.Size(663, 245);
             this.dgvColaboradores.TabIndex = 12;
             // 
             // panel1
@@ -159,14 +148,14 @@
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.dateTimePickerDataFolga);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Location = new System.Drawing.Point(12, 180);
+            this.panel1.Location = new System.Drawing.Point(12, 283);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(428, 171);
+            this.panel1.Size = new System.Drawing.Size(650, 171);
             this.panel1.TabIndex = 13;
             // 
             // btnNovo
             // 
-            this.btnNovo.Location = new System.Drawing.Point(12, 151);
+            this.btnNovo.Location = new System.Drawing.Point(12, 254);
             this.btnNovo.Name = "btnNovo";
             this.btnNovo.Size = new System.Drawing.Size(75, 23);
             this.btnNovo.TabIndex = 14;
@@ -175,7 +164,7 @@
             // 
             // btnEditar
             // 
-            this.btnEditar.Location = new System.Drawing.Point(93, 151);
+            this.btnEditar.Location = new System.Drawing.Point(93, 254);
             this.btnEditar.Name = "btnEditar";
             this.btnEditar.Size = new System.Drawing.Size(75, 23);
             this.btnEditar.TabIndex = 15;
@@ -186,15 +175,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(687, 584);
+            this.ClientSize = new System.Drawing.Size(687, 466);
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnNovo);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dgvColaboradores);
-            this.Controls.Add(this.dgvEscala);
             this.Name = "FormColaborador";
             this.Text = "Colaborador";
-            ((System.ComponentModel.ISupportInitialize)(this.dgvEscala)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColaboradores)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -214,7 +201,6 @@
         private Label label4;
         private DateTimePicker dateTimePickerHoraEntrada;
         private DateTimePicker dateTimePickerHoraSaida;
-        private DataGridView dgvEscala;
         private DataGridView dgvColaboradores;
         private Panel panel1;
         private Button btnNovo;
