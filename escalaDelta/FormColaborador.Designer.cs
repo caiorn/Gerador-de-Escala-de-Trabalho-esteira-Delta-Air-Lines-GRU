@@ -23,8 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.btnCadastrarSalvar = new System.Windows.Forms.Button();
-            this.btnExcluir = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -35,36 +34,27 @@
             this.dateTimePickerHoraSaida = new System.Windows.Forms.DateTimePicker();
             this.dgvColaboradores = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnNovo = new System.Windows.Forms.Button();
-            this.btnEditar = new System.Windows.Forms.Button();
+            this.btnNewAndSave = new System.Windows.Forms.Button();
+            this.btnEditAndDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColaboradores)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnCadastrarSalvar
+            // btnCancel
             // 
-            this.btnCadastrarSalvar.Location = new System.Drawing.Point(10, 142);
-            this.btnCadastrarSalvar.Name = "btnCadastrarSalvar";
-            this.btnCadastrarSalvar.Size = new System.Drawing.Size(160, 23);
-            this.btnCadastrarSalvar.TabIndex = 0;
-            this.btnCadastrarSalvar.Text = "Cadastrar/Salvar";
-            this.btnCadastrarSalvar.UseVisualStyleBackColor = true;
-            this.btnCadastrarSalvar.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // btnExcluir
-            // 
-            this.btnExcluir.Location = new System.Drawing.Point(176, 142);
-            this.btnExcluir.Name = "btnExcluir";
-            this.btnExcluir.Size = new System.Drawing.Size(75, 23);
-            this.btnExcluir.TabIndex = 2;
-            this.btnExcluir.Text = "Excluir";
-            this.btnExcluir.UseVisualStyleBackColor = true;
+            this.btnCancel.Location = new System.Drawing.Point(220, 410);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(98, 23);
+            this.btnCancel.TabIndex = 2;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(93, 10);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(158, 23);
+            this.textBox1.Size = new System.Drawing.Size(177, 23);
             this.textBox1.TabIndex = 3;
             // 
             // label1
@@ -96,10 +86,10 @@
             // 
             // dateTimePickerDataFolga
             // 
-            this.dateTimePickerDataFolga.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePickerDataFolga.Format = System.Windows.Forms.DateTimePickerFormat.Time;
             this.dateTimePickerDataFolga.Location = new System.Drawing.Point(95, 110);
             this.dateTimePickerDataFolga.Name = "dateTimePickerDataFolga";
-            this.dateTimePickerDataFolga.Size = new System.Drawing.Size(156, 23);
+            this.dateTimePickerDataFolga.Size = new System.Drawing.Size(175, 23);
             this.dateTimePickerDataFolga.TabIndex = 7;
             // 
             // label4
@@ -113,18 +103,20 @@
             // 
             // dateTimePickerHoraEntrada
             // 
-            this.dateTimePickerHoraEntrada.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePickerHoraEntrada.CustomFormat = "HH:mm";
+            this.dateTimePickerHoraEntrada.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePickerHoraEntrada.Location = new System.Drawing.Point(93, 46);
             this.dateTimePickerHoraEntrada.Name = "dateTimePickerHoraEntrada";
-            this.dateTimePickerHoraEntrada.Size = new System.Drawing.Size(158, 23);
+            this.dateTimePickerHoraEntrada.Size = new System.Drawing.Size(177, 23);
             this.dateTimePickerHoraEntrada.TabIndex = 9;
             // 
             // dateTimePickerHoraSaida
             // 
-            this.dateTimePickerHoraSaida.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePickerHoraSaida.CustomFormat = "HH:mm";
+            this.dateTimePickerHoraSaida.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePickerHoraSaida.Location = new System.Drawing.Point(93, 78);
             this.dateTimePickerHoraSaida.Name = "dateTimePickerHoraSaida";
-            this.dateTimePickerHoraSaida.Size = new System.Drawing.Size(158, 23);
+            this.dateTimePickerHoraSaida.Size = new System.Drawing.Size(177, 23);
             this.dateTimePickerHoraSaida.TabIndex = 10;
             // 
             // dgvColaboradores
@@ -133,52 +125,54 @@
             this.dgvColaboradores.Location = new System.Drawing.Point(12, 3);
             this.dgvColaboradores.Name = "dgvColaboradores";
             this.dgvColaboradores.RowTemplate.Height = 25;
-            this.dgvColaboradores.Size = new System.Drawing.Size(663, 245);
+            this.dgvColaboradores.Size = new System.Drawing.Size(430, 245);
             this.dgvColaboradores.TabIndex = 12;
+            this.dgvColaboradores.SelectionChanged += new System.EventHandler(this.dgvColaboradores_SelectionChanged);
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.btnCadastrarSalvar);
             this.panel1.Controls.Add(this.dateTimePickerHoraSaida);
-            this.panel1.Controls.Add(this.btnExcluir);
             this.panel1.Controls.Add(this.dateTimePickerHoraEntrada);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.dateTimePickerDataFolga);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Location = new System.Drawing.Point(12, 283);
+            this.panel1.Location = new System.Drawing.Point(12, 254);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(650, 171);
+            this.panel1.Size = new System.Drawing.Size(430, 150);
             this.panel1.TabIndex = 13;
             // 
-            // btnNovo
+            // btnNewAndSave
             // 
-            this.btnNovo.Location = new System.Drawing.Point(12, 254);
-            this.btnNovo.Name = "btnNovo";
-            this.btnNovo.Size = new System.Drawing.Size(75, 23);
-            this.btnNovo.TabIndex = 14;
-            this.btnNovo.Text = "Novo";
-            this.btnNovo.UseVisualStyleBackColor = true;
+            this.btnNewAndSave.Location = new System.Drawing.Point(12, 410);
+            this.btnNewAndSave.Name = "btnNewAndSave";
+            this.btnNewAndSave.Size = new System.Drawing.Size(98, 23);
+            this.btnNewAndSave.TabIndex = 14;
+            this.btnNewAndSave.Text = "New/Add/Save";
+            this.btnNewAndSave.UseVisualStyleBackColor = true;
+            this.btnNewAndSave.Click += new System.EventHandler(this.btnNewAndEdit_Click);
             // 
-            // btnEditar
+            // btnEditAndDelete
             // 
-            this.btnEditar.Location = new System.Drawing.Point(93, 254);
-            this.btnEditar.Name = "btnEditar";
-            this.btnEditar.Size = new System.Drawing.Size(75, 23);
-            this.btnEditar.TabIndex = 15;
-            this.btnEditar.Text = "Editar";
-            this.btnEditar.UseVisualStyleBackColor = true;
+            this.btnEditAndDelete.Location = new System.Drawing.Point(116, 410);
+            this.btnEditAndDelete.Name = "btnEditAndDelete";
+            this.btnEditAndDelete.Size = new System.Drawing.Size(98, 23);
+            this.btnEditAndDelete.TabIndex = 15;
+            this.btnEditAndDelete.Text = "Edit/Delete";
+            this.btnEditAndDelete.UseVisualStyleBackColor = true;
+            this.btnEditAndDelete.Click += new System.EventHandler(this.btnEditAndDelete_Click);
             // 
             // FormColaborador
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(687, 466);
-            this.Controls.Add(this.btnEditar);
-            this.Controls.Add(this.btnNovo);
+            this.ClientSize = new System.Drawing.Size(454, 443);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnEditAndDelete);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.btnNewAndSave);
             this.Controls.Add(this.dgvColaboradores);
             this.Name = "FormColaborador";
             this.Text = "Colaborador";
@@ -190,9 +184,7 @@
         }
 
         #endregion
-
-        private Button btnCadastrarSalvar;
-        private Button btnExcluir;
+        private Button btnCancel;
         private TextBox textBox1;
         private Label label1;
         private Label label2;
@@ -203,7 +195,7 @@
         private DateTimePicker dateTimePickerHoraSaida;
         private DataGridView dgvColaboradores;
         private Panel panel1;
-        private Button btnNovo;
-        private Button btnEditar;
+        private Button btnNewAndSave;
+        private Button btnEditAndDelete;
     }
 }

@@ -199,11 +199,11 @@ namespace escalaDelta {
                         
             var todosDe6hQueTrabalhara = colaboradores.Where(c => c.Trabalha && c.HorasTrabalho == 6);
             Colaborador? HojeATLde6h = null;
-            Colaborador? HojeJFKde6h;
+            Colaborador? HojeJFKde6h = null;
 
             if (todosDe6hQueTrabalhara.Count() > 2) {
                 //se ao menos 3 de 6h trabalharao, definir primeiro o pier Justamente.
-                PIER_work = fila_PIER_Present.First(c => c.Trabalha);
+                PIER_work = fila_PIER_Present.First(c => c.Trabalha);                
                 HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != PIER_work.Nome);
                 HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome && c.Nome != PIER_work.Nome);
             } else {
@@ -445,7 +445,6 @@ Pier:
                             dataTable.Load(reader);
                         }
                     }
-
                     // Fechar a conexão com o banco de dados
                     connection.Close();
 
