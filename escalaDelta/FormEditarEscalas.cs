@@ -25,12 +25,14 @@ namespace escalaDelta {
             listBox1Pier.AllowDrop = true;
             listBox2ATL.AllowDrop = true;
             listBox3JFK.AllowDrop = true;
-            listBox4Ntrampou.AllowDrop = true;
+            listBox4NtrampouFolga.AllowDrop = true;
+            listBox1NtrampoOutros.AllowDrop = true;
 
             listBox1Pier.DisplayMember = "Nome";
             listBox2ATL.DisplayMember = "Nome";
             listBox3JFK.DisplayMember = "Nome";
-            listBox4Ntrampou.DisplayMember = "Nome";
+            listBox4NtrampouFolga.DisplayMember = "Nome";
+            listBox1NtrampoOutros.DisplayMember = "Nome";
 
 
             // Associa os eventos de arrastar e soltar para cada ListBox
@@ -46,9 +48,13 @@ namespace escalaDelta {
             listBox3JFK.DragDrop += ListBox_DragDrop;
             listBox3JFK.MouseDown += listBox_MouseDown;
 
-            listBox4Ntrampou.DragEnter += ListBox_DragEnter;
-            listBox4Ntrampou.DragDrop += ListBox_DragDrop;
-            listBox4Ntrampou.MouseDown += listBox_MouseDown;
+            listBox4NtrampouFolga.DragEnter += ListBox_DragEnter;
+            listBox4NtrampouFolga.DragDrop += ListBox_DragDrop;
+            listBox4NtrampouFolga.MouseDown += listBox_MouseDown;
+
+            listBox1NtrampoOutros.DragEnter += ListBox_DragEnter;
+            listBox1NtrampoOutros.DragDrop += ListBox_DragDrop;
+            listBox1NtrampoOutros.MouseDown += listBox_MouseDown;
 
         }
 
@@ -72,10 +78,14 @@ namespace escalaDelta {
                                 listBox2ATL.Items.Add(worker);
                             } else if (localTrabalho == "JFK") {
                                 listBox3JFK.Items.Add(worker);
+                            }else if (localTrabalho == "FOLGA") {
+                                listBox4NtrampouFolga.Items.Add(worker);
+                            }else if (localTrabalho == "OUTROS") {
+                                listBox1NtrampoOutros.Items.Add(worker);
                             }
                         }
-                        Colaborador[] naoTrabalhou = Form1.colaboradores.Where(c => !trabalhou.Contains(c)).ToArray();
-                        listBox4Ntrampou.Items.AddRange(naoTrabalhou);
+                        //Colaborador[] naoTrabalhou = Form1.colaboradores.Where(c => !trabalhou.Contains(c)).ToArray();
+                        //listBox4NtrampouFolga.Items.AddRange(naoTrabalhou);
                     }
                 }
             }
@@ -146,6 +156,20 @@ namespace escalaDelta {
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@idColaborador", colaboradorTrabalhou.Id);
                         cmd.Parameters.AddWithValue("@localTrabalho", "JFK");
+                        cmd.Parameters.AddWithValue("@data", paramDate);
+                        cmd.ExecuteNonQuery();
+                    }
+                    foreach (Colaborador colaborador in listBox4NtrampouFolga.Items) {
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
+                        cmd.Parameters.AddWithValue("@localTrabalho", "FOLGA");
+                        cmd.Parameters.AddWithValue("@data", paramDate);
+                        cmd.ExecuteNonQuery();
+                    }
+                    foreach (Colaborador colaborador in listBox1NtrampoOutros.Items) {
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
+                        cmd.Parameters.AddWithValue("@localTrabalho", "OUTROS");
                         cmd.Parameters.AddWithValue("@data", paramDate);
                         cmd.ExecuteNonQuery();
                     }

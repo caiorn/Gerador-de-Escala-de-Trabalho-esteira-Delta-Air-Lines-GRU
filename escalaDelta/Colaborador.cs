@@ -38,6 +38,6 @@ namespace escalaDelta {
                 TimeSpan diferenca = TimeSpan.FromHours(Saida.Value.Hour - Entrada.Value.Hour).Add(TimeSpan.FromMinutes(Saida.Value.Minute - Entrada.Value.Minute));
                 return (int)diferenca.TotalHours;
             }
-        }
+        }        
     }
 }

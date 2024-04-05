@@ -1,44 +1,43 @@
 ﻿using escalaDelta.Utils;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
 using System.Data.SQLite;
-using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Transactions;
 
 namespace escalaDelta {
     public partial class FormColaborador : Form {
 
+
+        public int idEditing { get; set; }
         public enum state { INITIAL, NEW, EDIT }
         private state _stateForm;
         public state StateForm {
             get { return _stateForm; }
             set {
                 _stateForm = value;
+                dgvColaboradores.Enabled = value == state.INITIAL;
 
-                if (value == state.INITIAL) {
-                    btnNewAndSave.Text = "New";
-                    btnEditAndDelete.Text = "Edit";
-                    btnEditAndDelete.Visible = true;
-                    btnCancel.Visible = false;
+                if (value == state.INITIAL) {//New,Add,Save
+                    idEditing = 0;
+                    dgvColaboradores_SelectionChanged(dgvColaboradores, EventArgs.Empty);
+
+                    btnNewInsertUpdate.Text = "New";
+                    btnEditCancel.Text = "Edit";
+                    btnNewInsertUpdate.Visible = true;
+                    btnDelete.Visible = false;
                     EnableDisableEdits(false);
+
                 } else {
+                    btnEditCancel.Text = "Cancel";
                     if (value == state.NEW) {
-                        btnNewAndSave.Text = "Add";
-                        btnEditAndDelete.Visible = false;
+                        textBox1.Clear();
+                        btnNewInsertUpdate.Text = "Insert";
                     } else if (value == state.EDIT) {
-                        btnNewAndSave.Text = "Save";
-                        btnEditAndDelete.Text = "Delete";
+                        if (idEditing == 0) {
+                            throw new Exception("Atribua o id antes de mudar o estado do Grupo para Edicao");
+                        }
+                        btnNewInsertUpdate.Text = "Update";
+                        btnDelete.Visible = true;
                     }
-                    btnCancel.Visible = true;
                     EnableDisableEdits(true);
                 }
             }
@@ -67,11 +66,12 @@ namespace escalaDelta {
                            ("Entrada", 10),
                            ("Saída", 10)
                            );
-            CarregarConsultaDataGridView();
+            CarregarConsultaDataGridView(dgvColaboradores);
             EnableDisableEdits(false);
         }
 
-        private void CarregarConsultaDataGridView() {
+        private void CarregarConsultaDataGridView(DataGridView dgv) {
+            dgv.Rows.Clear();
             try {
                 using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                     // Abrir a conexão com o banco de dados
@@ -96,7 +96,8 @@ namespace escalaDelta {
                                 saida = DateTime.Parse(saida).ToString("HH:mm");
 
                                 // Adiciona uma nova linha ao DataGridView com os valores formatados
-                                dgvColaboradores.Rows.Add(id, nome, entrada, saida);
+                                dgv.Rows.Add(id, nome, entrada, saida);
+                                dgv.ClearSelection();
                             }
                         }
                     }
@@ -109,67 +110,54 @@ namespace escalaDelta {
             }
         }
 
-        private void button1_Click(object sender, EventArgs e) {
-            // Aqui você pode obter os dados do colaborador a partir dos campos do formulário ou de qualquer outra fonte
-            string nome = textBox1.Text;
-            DateTime horaEntrada = dateTimePickerHoraEntrada.Value;
-            DateTime horaSaida = dateTimePickerHoraSaida.Value;
-            DateTime ultimoDiaFolga = dateTimePickerDataFolga.Value;
+ 
 
-            InserirColaborador(nome, horaEntrada, horaSaida, ultimoDiaFolga);
-
-            MessageBox.Show("Colaborador inserido com sucesso!");
-        }
-
-
-        private void InserirColaborador(string nome, DateTime horaEntrada, DateTime horaSaida, DateTime ultimoDiaFolga) {
-            string caminhoBancoDados = "database.db";
-
-            using (var conexao = new SQLiteConnection($"Data Source={caminhoBancoDados}")) {
-                conexao.Open();
-
-                using (var cmd = new SQLiteCommand(
-                    "INSERT INTO Colaborador (nome, hora_entrada, hora_saida, ultimo_dia_folga) " +
-                    "VALUES (@nome, @horaEntrada, @horaSaida, @ultimoDiaFolga)", conexao)) {
-                    cmd.Parameters.AddWithValue("@nome", nome);
-                    cmd.Parameters.AddWithValue("@horaEntrada", horaEntrada);
-                    cmd.Parameters.AddWithValue("@horaSaida", horaSaida);
-                    cmd.Parameters.AddWithValue("@ultimoDiaFolga", ultimoDiaFolga);
-
-                    cmd.ExecuteNonQuery();
+        private void btnNewInsertUpdate_Click(object sender, EventArgs e) {
+            try {
+                switch (StateForm) {
+                    case state.INITIAL:
+                        StateForm = state.NEW;
+                        break;
+                    case state.NEW:
+                        if (Insert()) {
+                            CarregarConsultaDataGridView(dgvColaboradores);
+                        }
+                        StateForm = state.INITIAL;
+                        break;
+                    case state.EDIT:
+                        if (Update()) {
+                            CarregarConsultaDataGridView(dgvColaboradores);
+                        }
+                        StateForm = state.INITIAL;
+                        break;
+                    default:
+                        break;
                 }
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message);
             }
+            
         }
 
-        private void btnNewAndEdit_Click(object sender, EventArgs e) {
+        private void btnEditCancel_Click(object sender, EventArgs e) {
             switch (StateForm) {
                 case state.INITIAL:
-                    StateForm = state.NEW;
-                    break;
-                case state.NEW:
-                    //Insert
-                    StateForm = state.INITIAL;
-                    break;
-                case state.EDIT:
-                    //Update
-                    StateForm = state.INITIAL;                    
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void btnEditAndDelete_Click(object sender, EventArgs e) {
-            switch (StateForm) {
-                case state.INITIAL:
+                    idEditing = Convert.ToInt32(dgvColaboradores.CurrentRow.Cells["Cód"].Value);
                     StateForm = state.EDIT;
                     break;
-                case state.EDIT:
-                    //Delete
+                default:
                     StateForm = state.INITIAL;
                     break;
-                default:
-                    break;
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e) {
+            var confirmDelete = MessageBox.Show("Certeza que deseja deletar ?", "Confirmação", MessageBoxButtons.YesNo);
+            if (confirmDelete == DialogResult.Yes) {
+                if (Delete()) {
+                    CarregarConsultaDataGridView(dgvColaboradores);
+                    StateForm = state.INITIAL;
+                }
             }
         }
 
@@ -177,6 +165,56 @@ namespace escalaDelta {
             StateForm = state.INITIAL;
         }
 
+        private bool Insert() {
+            using (var conexao = new SQLiteConnection(Form1.connectionString)) {
+                conexao.Open();
+                using (var cmd = new SQLiteCommand(
+                    "INSERT INTO Colaborador (nome, hora_entrada, hora_saida) " +
+                    "VALUES (@nome, @horaEntrada, @horaSaida)", conexao)) {
+                    cmd.Parameters.AddWithValue("@nome", textBox1.Text);
+                    cmd.Parameters.AddWithValue("@horaEntrada", dateTimePickerHoraEntrada.Text);
+                    cmd.Parameters.AddWithValue("@horaSaida", dateTimePickerHoraSaida.Text);
+
+                    int totalInserted = cmd.ExecuteNonQuery();
+                    return totalInserted == 1;                    
+                }
+            }
+        }
+        private bool Update() {
+            if (idEditing <= 0) {
+                throw new Exception("Id não atribuido no método Update");
+            }
+
+            using (var conexao = new SQLiteConnection(Form1.connectionString)) {
+                conexao.Open();
+                using (var cmd = new SQLiteCommand(
+                    "UPDATE Colaborador SET nome = @nome, hora_entrada = @horaEntrada, hora_saida = @horaSaida " +
+                    "WHERE id = @id", conexao)) {
+                    cmd.Parameters.AddWithValue("@nome", textBox1.Text);
+                    cmd.Parameters.AddWithValue("@horaEntrada", dateTimePickerHoraEntrada.Text);
+                    cmd.Parameters.AddWithValue("@horaSaida", dateTimePickerHoraSaida.Text);
+                    cmd.Parameters.AddWithValue("@id", idEditing);
+                    int totalUpdated = cmd.ExecuteNonQuery();
+                    return totalUpdated == 1;
+                }
+            }
+        }
+
+        private bool Delete() {
+            if (idEditing <= 0) {
+                throw new Exception("Id não atribuido no método Delete");
+            }
+
+            using (var conexao = new SQLiteConnection(Form1.connectionString)) {
+                conexao.Open();
+                using (var cmd = new SQLiteCommand(
+                    "DELETE FROM Colaborador WHERE id = @id", conexao)) {
+                    cmd.Parameters.AddWithValue("@id", idEditing);
+                    int totalDeleted = cmd.ExecuteNonQuery();
+                    return totalDeleted == 1;
+                }
+            }
+        }
 
         private void EnableDisableEdits(bool enable) {
             textBox1.ReadOnly = !enable;
@@ -200,7 +238,9 @@ namespace escalaDelta {
                 // Define o valor do DateTimePicker customizado para hora de entrada
                 dateTimePickerHoraEntrada.Value = DateTime.ParseExact(horaEntrada, "HH:mm", CultureInfo.InvariantCulture);
                 dateTimePickerHoraSaida.Value = DateTime.ParseExact(horaSaida, "HH:mm", CultureInfo.InvariantCulture);
+            } else {
+                textBox1.Clear();
             }
-        }
+        }        
     }
 }

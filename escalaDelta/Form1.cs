@@ -355,7 +355,9 @@ Pier:
 
         private void cadastrarFuncionarioToolStripMenuItem_Click(object sender, EventArgs e) {
             FormColaborador frmColaborador = new FormColaborador();
-            frmColaborador.Show();
+            frmColaborador.ShowDialog();
+            loadColaboradores();
+            refreshDatas();
         }
 
         private void HighlightSearchText(string searchText, RichTextBox control, Color color) {
@@ -385,7 +387,7 @@ Pier:
                             while (reader.Read()) {
                                 DateTime entrada = (DateTime)reader["hora_entrada"];
                                 DateTime saida = (DateTime)reader["hora_saida"];
-                                DateTime ultimoDiaFolga = (DateTime)reader["ultimo_dia_folga"];
+                                //DateTime ultimoDiaFolga = (DateTime)reader["ultimo_dia_folga"];
 
                                 Colaborador colaborador = new Colaborador();
                                 colaborador.Id = Convert.ToInt32(reader["id"]);

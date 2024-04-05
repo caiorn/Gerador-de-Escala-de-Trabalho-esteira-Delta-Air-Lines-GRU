@@ -23,7 +23,6 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.btnCancel = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -34,21 +33,14 @@
             this.dateTimePickerHoraSaida = new System.Windows.Forms.DateTimePicker();
             this.dgvColaboradores = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnNewAndSave = new System.Windows.Forms.Button();
-            this.btnEditAndDelete = new System.Windows.Forms.Button();
+            this.btnNewInsertUpdate = new System.Windows.Forms.Button();
+            this.btnEditCancel = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColaboradores)).BeginInit();
             this.panel1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(220, 410);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(98, 23);
-            this.btnCancel.TabIndex = 2;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // textBox1
             // 
@@ -144,47 +136,65 @@
             this.panel1.Size = new System.Drawing.Size(430, 150);
             this.panel1.TabIndex = 13;
             // 
-            // btnNewAndSave
+            // btnNewInsertUpdate
             // 
-            this.btnNewAndSave.Location = new System.Drawing.Point(12, 410);
-            this.btnNewAndSave.Name = "btnNewAndSave";
-            this.btnNewAndSave.Size = new System.Drawing.Size(98, 23);
-            this.btnNewAndSave.TabIndex = 14;
-            this.btnNewAndSave.Text = "New/Add/Save";
-            this.btnNewAndSave.UseVisualStyleBackColor = true;
-            this.btnNewAndSave.Click += new System.EventHandler(this.btnNewAndEdit_Click);
+            this.btnNewInsertUpdate.Location = new System.Drawing.Point(3, 3);
+            this.btnNewInsertUpdate.Name = "btnNewInsertUpdate";
+            this.btnNewInsertUpdate.Size = new System.Drawing.Size(98, 23);
+            this.btnNewInsertUpdate.TabIndex = 14;
+            this.btnNewInsertUpdate.Text = "New/Insert/Update";
+            this.btnNewInsertUpdate.UseVisualStyleBackColor = true;
+            this.btnNewInsertUpdate.Click += new System.EventHandler(this.btnNewInsertUpdate_Click);
             // 
-            // btnEditAndDelete
+            // btnEditCancel
             // 
-            this.btnEditAndDelete.Location = new System.Drawing.Point(116, 410);
-            this.btnEditAndDelete.Name = "btnEditAndDelete";
-            this.btnEditAndDelete.Size = new System.Drawing.Size(98, 23);
-            this.btnEditAndDelete.TabIndex = 15;
-            this.btnEditAndDelete.Text = "Edit/Delete";
-            this.btnEditAndDelete.UseVisualStyleBackColor = true;
-            this.btnEditAndDelete.Click += new System.EventHandler(this.btnEditAndDelete_Click);
+            this.btnEditCancel.Location = new System.Drawing.Point(107, 3);
+            this.btnEditCancel.Name = "btnEditCancel";
+            this.btnEditCancel.Size = new System.Drawing.Size(98, 23);
+            this.btnEditCancel.TabIndex = 15;
+            this.btnEditCancel.Text = "Edit/Cancel";
+            this.btnEditCancel.UseVisualStyleBackColor = true;
+            this.btnEditCancel.Click += new System.EventHandler(this.btnEditCancel_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Location = new System.Drawing.Point(211, 3);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(98, 23);
+            this.btnDelete.TabIndex = 16;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.btnNewInsertUpdate);
+            this.flowLayoutPanel1.Controls.Add(this.btnEditCancel);
+            this.flowLayoutPanel1.Controls.Add(this.btnDelete);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 410);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(430, 32);
+            this.flowLayoutPanel1.TabIndex = 11;
             // 
             // FormColaborador
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(454, 443);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnEditAndDelete);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.btnNewAndSave);
             this.Controls.Add(this.dgvColaboradores);
             this.Name = "FormColaborador";
             this.Text = "Colaborador";
             ((System.ComponentModel.ISupportInitialize)(this.dgvColaboradores)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private Button btnCancel;
         private TextBox textBox1;
         private Label label1;
         private Label label2;
@@ -195,7 +205,9 @@
         private DateTimePicker dateTimePickerHoraSaida;
         private DataGridView dgvColaboradores;
         private Panel panel1;
-        private Button btnNewAndSave;
-        private Button btnEditAndDelete;
+        private Button btnNewInsertUpdate;
+        private Button btnEditCancel;
+        private Button btnDelete;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }
