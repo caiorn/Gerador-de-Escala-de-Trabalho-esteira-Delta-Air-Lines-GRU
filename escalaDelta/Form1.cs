@@ -381,7 +381,7 @@ Pier:
             try {
                 using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                     connection.Open();
-                    string query = "SELECT * FROM Colaborador;";
+                    string query = "SELECT * FROM Colaborador WHERE deletado IS NULL;";
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
@@ -475,6 +475,7 @@ Pier:
                                         LIMIT 100
                                     ) AS ultimos_registros
                                     INNER JOIN Colaborador ON ultimos_registros.id_colaborador = colaborador.id
+                                        AND colaborador.deletado IS NULL
                                     ORDER BY ultimos_registros.data ASC;
                                     ";
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
@@ -517,7 +518,8 @@ Pier:
                     "hora_entrada DATETIME," +
                     "hora_saida DATETIME," +
                     "ultimo_dia_folga DATE," +
-                    "penultima_folga DATE)", conexao)) {
+                    "penultima_folga DATE," +
+                    "deletado DATE)", conexao)) {
                     cmd.ExecuteNonQuery();
                 }
 

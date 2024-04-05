@@ -59,7 +59,6 @@ namespace escalaDelta {
         }
 
         private void loadListBoxes() {
-            List<Colaborador> trabalhou = new List<Colaborador>();
             string paramDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
             string query = $"SELECT * FROM ColaboradorTrabalho WHERE data = '{paramDate}'";
             using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
@@ -68,24 +67,23 @@ namespace escalaDelta {
                     using (SQLiteDataReader reader = command.ExecuteReader()) {
                         while (reader.Read()) { 
                             int idColaborador = reader.GetInt32(1);
-                            string localTrabalho = reader.GetString(2);
-                            var worker = Form1.colaboradores.First(c => c.Id == idColaborador);
-                            trabalhou.Add(worker);
+                            var worker = Form1.colaboradores.FirstOrDefault(c => c.Id == idColaborador);
+                            if (worker != null) {
+                                string localTrabalho = reader.GetString(2);
 
-                            if (localTrabalho == "PIER") {
-                                listBox1Pier.Items.Add(worker);
-                            } else if (localTrabalho == "ATL") {
-                                listBox2ATL.Items.Add(worker);
-                            } else if (localTrabalho == "JFK") {
-                                listBox3JFK.Items.Add(worker);
-                            }else if (localTrabalho == "FOLGA") {
-                                listBox4NtrampouFolga.Items.Add(worker);
-                            }else if (localTrabalho == "OUTROS") {
-                                listBox1NtrampoOutros.Items.Add(worker);
-                            }
+                                if (localTrabalho == "PIER") {
+                                    listBox1Pier.Items.Add(worker);
+                                } else if (localTrabalho == "ATL") {
+                                    listBox2ATL.Items.Add(worker);
+                                } else if (localTrabalho == "JFK") {
+                                    listBox3JFK.Items.Add(worker);
+                                } else if (localTrabalho == "FOLGA") {
+                                    listBox4NtrampouFolga.Items.Add(worker);
+                                } else if (localTrabalho == "OUTROS") {
+                                    listBox1NtrampoOutros.Items.Add(worker);
+                                }
+                            }    
                         }
-                        //Colaborador[] naoTrabalhou = Form1.colaboradores.Where(c => !trabalhou.Contains(c)).ToArray();
-                        //listBox4NtrampouFolga.Items.AddRange(naoTrabalhou);
                     }
                 }
             }

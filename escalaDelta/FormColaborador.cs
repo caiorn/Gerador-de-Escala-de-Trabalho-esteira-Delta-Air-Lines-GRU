@@ -78,7 +78,7 @@ namespace escalaDelta {
                     connection.Open();
 
                     // Comando SQL para selecionar todos os colaboradores
-                    string query = "SELECT id, nome, hora_entrada, hora_saida FROM Colaborador";
+                    string query = "SELECT id, nome, hora_entrada, hora_saida FROM Colaborador WHERE deletado IS NULL";
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
@@ -208,8 +208,9 @@ namespace escalaDelta {
             using (var conexao = new SQLiteConnection(Form1.connectionString)) {
                 conexao.Open();
                 using (var cmd = new SQLiteCommand(
-                    "DELETE FROM Colaborador WHERE id = @id", conexao)) {
+                    "UPDATE Colaborador SET deletado = @data WHERE id = @id", conexao)) {
                     cmd.Parameters.AddWithValue("@id", idEditing);
+                    cmd.Parameters.AddWithValue("@data", DateTime.Now.ToString("yyyy-MM-dd"));
                     int totalDeleted = cmd.ExecuteNonQuery();
                     return totalDeleted == 1;
                 }
