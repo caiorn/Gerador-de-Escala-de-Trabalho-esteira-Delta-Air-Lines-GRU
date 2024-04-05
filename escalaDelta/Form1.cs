@@ -81,7 +81,7 @@ namespace escalaDelta {
 
         private void refreshDatas() {
             loadUltimasEscalasDataGridView();
-            DateOnly dataProxEscala = buscarDataUltimaEscalaGerada();
+            buscarDataUltimaEscalaGerada();
             //passar datas por parametro. +mais controle;
             definirColaboraderesAusenteFolga();
             definirColaboradoresAusenteOutros();
@@ -485,43 +485,38 @@ Pier:
 INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_folga_unica) 
     VALUES 
     (1, 'CAIO', '18:30', '22:30', '2024-03-16'),
-    (2, 'LUCIUS', '18:30', '22:30', '2024-03-18'),
+    (2, 'LUCIUS', '18:30', '22:30', '2024-03-17'),
     (3, 'ROMARIO', '18:00', '22:00', '2024-03-18'),
-    (4, 'LEONARDO', '19:00', '23:00', '2024-03-16'),
-    (5, 'WESLEY', '17:50', '21:50', '2024-03-16'),
-    (6, 'AZEVEDO', '17:00', '23:00', '2024-03-16'),
-    (7, 'RUBENS', '17:00', '23:00', '2024-03-16'),
-    (8, 'IGOR', '17:00', '23:00', '2024-03-16')
+    (4, 'LEONARDO', '19:00', '23:00', '2024-03-19'),
+    (5, 'WESLEY', '17:50', '21:50', '2024-03-20'),
+    (6, 'AZEVEDO', '17:00', '23:00', '2024-03-21'),
+    (7, 'RUBENS', '17:00', '23:00', '2024-03-22'),
+    (8, 'IGOR', '17:00', '23:00', '2024-03-23')
 ", conexao)) {
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        private DateOnly buscarDataUltimaEscalaGerada() {
+        private void buscarDataUltimaEscalaGerada() {
             string query = "SELECT MAX(data) FROM ColaboradorTrabalho";
             using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                 connection.Open();
                 using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                     string dateTimeString = command.ExecuteScalar().ToString();
                     if (string.IsNullOrEmpty(dateTimeString)) {
-                        return DateOnly.FromDateTime(DateTime.Today);
+                        dataProximaEscala = DateOnly.FromDateTime(DateTime.Today);
                     } else {
                         DateOnly dataUltimaEscala = DateOnly.ParseExact(dateTimeString, "yyyy-MM-dd", null);
                         dataProximaEscala = dataUltimaEscala.AddDays(1);
-                        DateOnly hoje = DateOnly.FromDateTime(DateTime.Today);
-                        lblInfoCheckbox.Text = $"Quem trabalha {(dataProximaEscala == hoje ? "Hoje" : "")}\r\n{dataProximaEscala}";
-
-                        return dataUltimaEscala;
-                    }                    
+                    }
+                    DateOnly hoje = DateOnly.FromDateTime(DateTime.Today);
+                    lblInfoCheckbox.Text = $"Quem trabalha {(dataProximaEscala == hoje ? "Hoje" : "")}\r\n{dataProximaEscala}";
                 }
             }
         }
 
         private void InserirEscala() {
-            DateOnly dataUltimaEscalaGerada = buscarDataUltimaEscalaGerada();
-            dataProximaEscala = dataUltimaEscalaGerada.AddDays(1);
-
             using (var conexao = new SQLiteConnection(connectionString)) {
                 conexao.Open();
 
