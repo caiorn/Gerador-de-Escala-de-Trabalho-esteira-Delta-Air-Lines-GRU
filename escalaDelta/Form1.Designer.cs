@@ -53,6 +53,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.listBoxOutros = new System.Windows.Forms.ListBox();
             this.listBoxTrabalha = new System.Windows.Forms.ListBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -370,11 +372,31 @@
             this.listBoxTrabalha.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
             this.listBoxTrabalha.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseDown);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(451, 295);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 40;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePicker1.Location = new System.Drawing.Point(363, 299);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(82, 23);
+            this.dateTimePicker1.TabIndex = 41;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(761, 611);
+            this.Controls.Add(this.dateTimePicker1);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.listBoxTrabalha);
             this.Controls.Add(this.listBoxOutros);
             this.Controls.Add(this.label6);
@@ -442,5 +464,7 @@
         private Label label6;
         private ListBox listBoxOutros;
         private ListBox listBoxTrabalha;
+        private Button button1;
+        private DateTimePicker dateTimePicker1;
     }
 }

@@ -127,62 +127,7 @@ namespace escalaDelta {
         private void definirColaboraderesAusenteFolga() {
             //verificar quem folga na escala a ser gerada
             foreach (Colaborador colaborador in colaboradores) {
-                DateOnly ultima_f;
-                DateOnly penult_f;
-                List<Colaborador> col_folgaram_antes_penult_f = new List<Colaborador>();
-
-                using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
-                    connection.Open();
-                    string query1 = $"select * from ColaboradorTrabalho where local_trabalho = 'FOLGA' and id_colaborador = {colaborador.Id} order by data desc limit 3;";
-                    using (SQLiteCommand command = new SQLiteCommand(query1, connection)) {
-                        SQLiteDataReader reader = command.ExecuteReader();
-                        if (reader.Read()) { ultima_f = DateOnly.FromDateTime((DateTime)reader["data"]); }
-                        if (reader.Read()) { penult_f = DateOnly.FromDateTime((DateTime)reader["data"]); }
-
-                        reader.Close();
-                        string query2 = $"select * from ColaboradorTrabalho where local_trabalho = 'FOLGA' and data = '{penult_f.AddDays(-1).ToString("yyyy-MM-dd")}'";
-                        command.CommandText = query2;
-                        reader = command.ExecuteReader();
-                        while (reader.Read()) {
-                            Colaborador col_f_a_p_f = new Colaborador();
-                            col_f_a_p_f.Id = Convert.ToInt32(reader["id_colaborador"]);
-                            col_folgaram_antes_penult_f.Add(col_f_a_p_f);
-                        }
-                        reader.Close();
-                    }
-                }
-
-                if (col_folgaram_antes_penult_f.Count == 0) {
-                    //não tem registros, não da pra saber se a prox é dobrada ou não
-                    continue;
-                }
-
-                int diferencaDiasEntre2ultimasFolgas = ultima_f.DayNumber - penult_f.DayNumber;
-
-                if (ultima_f == dataProximaEscala) {
-                    colaborador.Folga = true;
-                } else {
-                    if (diferencaDiasEntre2ultimasFolgas <= 1) {
-                        DateOnly prox_f = ultima_f.AddDays(7);
-                        if (prox_f == dataProximaEscala) {
-                            colaborador.Folga = true;
-                        } else {
-                            colaborador.Folga = false;
-                        }
-                    } else if (diferencaDiasEntre2ultimasFolgas == 7) {
-                        bool folgou_dia_antes_penultima_folga = col_folgaram_antes_penult_f.Any(c => c.Id == colaborador.Id);
-                        if (folgou_dia_antes_penultima_folga) {
-                            DateOnly prox_f = ultima_f.AddDays(7);
-                            if (prox_f == dataProximaEscala) {
-                                colaborador.Folga = true;
-                            } else {
-                                colaborador.Folga = false;
-                            }
-                        } else {
-                            colaborador.Folga = true;
-                        }
-                    }
-                }
+                colaborador.Folga = EstaDeFolga6x16x2(dataProximaEscala, colaborador.DataBaseFolga1Dia);
             };
         }
 
@@ -387,6 +332,7 @@ Pier:
                             while (reader.Read()) {
                                 DateTime entrada = (DateTime)reader["hora_entrada"];
                                 DateTime saida = (DateTime)reader["hora_saida"];
+                                DateOnly dataFolgaBase =  DateOnly.FromDateTime((DateTime)reader["data_dia_folga_unica"]);
                                 //DateTime ultimoDiaFolga = (DateTime)reader["ultimo_dia_folga"];
 
                                 Colaborador colaborador = new Colaborador();
@@ -394,6 +340,7 @@ Pier:
                                 colaborador.Nome = (string)reader["nome"];
                                 colaborador.Entrada = new TimeOnly(entrada.Hour, entrada.Minute);
                                 colaborador.Saida = new TimeOnly(saida.Hour, saida.Minute);
+                                colaborador.DataBaseFolga1Dia = dataFolgaBase;
                                 //colaborador.UltimoDiaFolga = new DateOnly(ultimoDiaFolga.Year, ultimoDiaFolga.Month, ultimoDiaFolga.Day);
 
                                 colaboradores.Add(colaborador);
@@ -517,8 +464,7 @@ Pier:
                     "nome TEXT," +
                     "hora_entrada DATETIME," +
                     "hora_saida DATETIME," +
-                    "ultimo_dia_folga DATE," +
-                    "penultima_folga DATE," +
+                    "data_dia_folga_unica DATE," +
                     "deletado DATE)", conexao)) {
                     cmd.ExecuteNonQuery();
                 }
@@ -536,7 +482,7 @@ Pier:
 
                 //default insert
                 using (var cmd = new SQLiteCommand(@"
-INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, ultimo_dia_folga) 
+INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_folga_unica) 
     VALUES 
     (1, 'CAIO', '18:30', '22:30', '2024-03-16'),
     (2, 'LUCIUS', '18:30', '22:30', '2024-03-18'),
@@ -557,13 +503,17 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, ultimo_di
             using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                 connection.Open();
                 using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
-                    string dateTimeString = (string)command.ExecuteScalar();
-                    DateOnly dataUltimaEscala = DateOnly.ParseExact(dateTimeString, "yyyy-MM-dd", null);
-                    dataProximaEscala = dataUltimaEscala.AddDays(1);
-                    DateOnly hoje = DateOnly.FromDateTime(DateTime.Today);
-                    lblInfoCheckbox.Text = $"Quem trabalha {(dataProximaEscala == hoje ? "Hoje" : "")}\r\n{dataProximaEscala}";
+                    string dateTimeString = command.ExecuteScalar().ToString();
+                    if (string.IsNullOrEmpty(dateTimeString)) {
+                        return DateOnly.FromDateTime(DateTime.Today);
+                    } else {
+                        DateOnly dataUltimaEscala = DateOnly.ParseExact(dateTimeString, "yyyy-MM-dd", null);
+                        dataProximaEscala = dataUltimaEscala.AddDays(1);
+                        DateOnly hoje = DateOnly.FromDateTime(DateTime.Today);
+                        lblInfoCheckbox.Text = $"Quem trabalha {(dataProximaEscala == hoje ? "Hoje" : "")}\r\n{dataProximaEscala}";
 
-                    return dataUltimaEscala;
+                        return dataUltimaEscala;
+                    }                    
                 }
             }
         }
@@ -693,6 +643,58 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, ultimo_di
                 }
                 refreshDatas();
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            //DateOnly[] folgas = { new DateOnly(2024, 04, 01), new DateOnly(2024, 04, 02) };
+            //if (EstaDeFolga(DateOnly.FromDateTime(dateTimePicker1.Value), folgas)) {
+            //    MessageBox.Show("Está de folga");
+            //}
+            DateOnly ultimaFolgaUnica = new DateOnly(2024, 04, 12);
+            if (EstaDeFolga6x16x2(DateOnly.FromDateTime(dateTimePicker1.Value), ultimaFolgaUnica)) {
+                MessageBox.Show("Está de folga");
+            }
+            dateTimePicker1.Value = dateTimePicker1.Value.AddDays(1);
+        }
+
+        /// <summary>
+        /// Verifica se em determinada data seria folga na escala 6x1 6x2 com base em uma data Inicial.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="ultimaFolgaUnica">Data de uma folga sozinha, sem dobradinha</param>
+        /// <returns></returns>
+        static bool EstaDeFolga6x16x2(DateOnly data, DateOnly ultimaFolgaUnica) {
+            var diferencaDias = Math.Abs(data.DayNumber - ultimaFolgaUnica.DayNumber);
+            // A cada 15 dias ele folgara 1x denovo
+            int diasFuturoSobra = diferencaDias % 15;
+            //  A folga dobrada dele é no 7º e 8º Dia.
+            if (diasFuturoSobra == 0 || diasFuturoSobra == 7 || diasFuturoSobra == 8) {
+                //está de folga
+                return true;
+            } else { return false; }
+
+
+
+            //while (data > dataUltimaFolgaDobradinha) {
+
+            //    var proxFolgaDe1Dia = dataUltimaFolgaDobradinha.AddDays(7);
+            //    var proxFolgaDe2DiaFirst = dataUltimaFolgaDobradinha.AddDays(7);
+            //    var proxFolgaDe2DiaSecon = dataUltimaFolgaDobradinha.AddDays(1);
+            //}
+
+            //TimeSpan diferenca = data - datasFolga[0];
+            //int diasDesdeFolga = (int)diferenca.TotalDays;
+
+            //int diasNoCiclo = diasDesdeFolga % 9; // 6 dias de trabalho + 1 ou 2 dias de folga
+            //int diaDaSemana = (int)data.DayOfWeek; // 0 = domingo, 1 = segunda, ..., 6 = sábado
+
+            //if (diasNoCiclo < 6) {
+            //    // Está trabalhando nos dias de semana
+            //    return diaDaSemana >= 1 && diaDaSemana <= 5;
+            //} else {
+            //    // Está de folga
+            //    return diasNoCiclo != 8; // Se diasNoCiclo for 8, significa que é o segundo dia de folga
+            //}
         }
     }
 }

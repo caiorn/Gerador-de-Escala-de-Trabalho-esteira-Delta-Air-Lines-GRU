@@ -58,13 +58,15 @@ namespace escalaDelta {
             dgvColaboradores.Columns.Add("Nome", "Nome");
             dgvColaboradores.Columns.Add("Entrada", "Entrada");
             dgvColaboradores.Columns.Add("Saída", "Saída");
+            dgvColaboradores.Columns.Add("Folga", "Folga");
             dgvColaboradores.Columns["Entrada"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvColaboradores.Columns["Saída"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvColaboradores.DefinirTamanhoPercentualColunasModeFILL(
                            ("Cód", 5),
                            ("Nome", 20),
                            ("Entrada", 10),
-                           ("Saída", 10)
+                           ("Saída", 10),
+                           ("Folga", 10)
                            );
             CarregarConsultaDataGridView(dgvColaboradores);
             EnableDisableEdits(false);
@@ -78,7 +80,7 @@ namespace escalaDelta {
                     connection.Open();
 
                     // Comando SQL para selecionar todos os colaboradores
-                    string query = "SELECT id, nome, hora_entrada, hora_saida FROM Colaborador WHERE deletado IS NULL";
+                    string query = "SELECT id, nome, hora_entrada, hora_saida, strftime('%d/%m/%Y', data_dia_folga_unica) as data_dia_folga_unica FROM Colaborador WHERE deletado IS NULL";
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
@@ -90,13 +92,14 @@ namespace escalaDelta {
                                 string nome = reader["nome"].ToString();
                                 string entrada = reader["hora_entrada"].ToString();
                                 string saida = reader["hora_saida"].ToString();
+                                string folga = reader["data_dia_folga_unica"].ToString();
 
                                 // Formata os valores para exibir somente a hora
                                 entrada = DateTime.Parse(entrada).ToString("HH:mm");
                                 saida = DateTime.Parse(saida).ToString("HH:mm");
 
                                 // Adiciona uma nova linha ao DataGridView com os valores formatados
-                                dgv.Rows.Add(id, nome, entrada, saida);
+                                dgv.Rows.Add(id, nome, entrada, saida, folga);
                                 dgv.ClearSelection();
                             }
                         }
@@ -169,11 +172,12 @@ namespace escalaDelta {
             using (var conexao = new SQLiteConnection(Form1.connectionString)) {
                 conexao.Open();
                 using (var cmd = new SQLiteCommand(
-                    "INSERT INTO Colaborador (nome, hora_entrada, hora_saida) " +
-                    "VALUES (@nome, @horaEntrada, @horaSaida)", conexao)) {
+                    "INSERT INTO Colaborador (nome, hora_entrada, hora_saida, data_dia_folga_unica) " +
+                    "VALUES (@nome, @horaEntrada, @horaSaida, @dataUltimaFolga)", conexao)) {
                     cmd.Parameters.AddWithValue("@nome", textBox1.Text);
                     cmd.Parameters.AddWithValue("@horaEntrada", dateTimePickerHoraEntrada.Text);
                     cmd.Parameters.AddWithValue("@horaSaida", dateTimePickerHoraSaida.Text);
+                    cmd.Parameters.AddWithValue("@dataUltimaFolga", dateTimePickerDataFolga.Value.ToString("yyyy-MM-dd"));
 
                     int totalInserted = cmd.ExecuteNonQuery();
                     return totalInserted == 1;                    
@@ -188,11 +192,11 @@ namespace escalaDelta {
             using (var conexao = new SQLiteConnection(Form1.connectionString)) {
                 conexao.Open();
                 using (var cmd = new SQLiteCommand(
-                    "UPDATE Colaborador SET nome = @nome, hora_entrada = @horaEntrada, hora_saida = @horaSaida " +
-                    "WHERE id = @id", conexao)) {
+                    "UPDATE Colaborador SET nome = @nome, hora_entrada = @horaEntrada, hora_saida = @horaSaida, data_dia_folga_unica = @dataUltimaFolga WHERE id = @id", conexao)) {
                     cmd.Parameters.AddWithValue("@nome", textBox1.Text);
                     cmd.Parameters.AddWithValue("@horaEntrada", dateTimePickerHoraEntrada.Text);
                     cmd.Parameters.AddWithValue("@horaSaida", dateTimePickerHoraSaida.Text);
+                    cmd.Parameters.AddWithValue("@dataUltimaFolga", dateTimePickerDataFolga.Value.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@id", idEditing);
                     int totalUpdated = cmd.ExecuteNonQuery();
                     return totalUpdated == 1;
@@ -235,10 +239,12 @@ namespace escalaDelta {
                 // Obtém o valor do DateTimePicker customizado para hora de entrada
                 string horaEntrada = linhaSelecionada.Cells["Entrada"].Value.ToString();
                 string horaSaida = linhaSelecionada.Cells["Saída"].Value.ToString();
+                string dataFolga = linhaSelecionada.Cells["Folga"].Value.ToString();
 
                 // Define o valor do DateTimePicker customizado para hora de entrada
                 dateTimePickerHoraEntrada.Value = DateTime.ParseExact(horaEntrada, "HH:mm", CultureInfo.InvariantCulture);
                 dateTimePickerHoraSaida.Value = DateTime.ParseExact(horaSaida, "HH:mm", CultureInfo.InvariantCulture);
+                dateTimePickerDataFolga.Value = DateTime.ParseExact(dataFolga, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             } else {
                 textBox1.Clear();
             }

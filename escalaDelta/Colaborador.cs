@@ -11,6 +11,7 @@ namespace escalaDelta {
         public string Nome { get; set; }        
         public TimeOnly? Entrada { get; set; }
         public TimeOnly? Saida { get; set; }
+        public DateOnly DataBaseFolga1Dia { get; set; }
         public bool Folga { get; set; }
         public bool NaoTrabalhaPorOutrosMotivos { get; set; }
         public bool Trabalha => VerificaSeTrabalha();

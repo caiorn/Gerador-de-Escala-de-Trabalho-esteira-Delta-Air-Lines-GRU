@@ -78,20 +78,20 @@
             // 
             // dateTimePickerDataFolga
             // 
-            this.dateTimePickerDataFolga.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dateTimePickerDataFolga.Location = new System.Drawing.Point(95, 110);
+            this.dateTimePickerDataFolga.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePickerDataFolga.Location = new System.Drawing.Point(234, 125);
             this.dateTimePickerDataFolga.Name = "dateTimePickerDataFolga";
-            this.dateTimePickerDataFolga.Size = new System.Drawing.Size(175, 23);
+            this.dateTimePickerDataFolga.Size = new System.Drawing.Size(85, 23);
             this.dateTimePickerDataFolga.TabIndex = 7;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(22, 110);
+            this.label4.Location = new System.Drawing.Point(22, 128);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(66, 15);
+            this.label4.Size = new System.Drawing.Size(209, 15);
             this.label4.TabIndex = 8;
-            this.label4.Text = "Data Folga:";
+            this.label4.Text = "Data que Folgou 1x (sem dobradinha):";
             // 
             // dateTimePickerHoraEntrada
             // 
@@ -133,7 +133,7 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Location = new System.Drawing.Point(12, 254);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(430, 150);
+            this.panel1.Size = new System.Drawing.Size(430, 159);
             this.panel1.TabIndex = 13;
             // 
             // btnNewInsertUpdate
@@ -171,7 +171,7 @@
             this.flowLayoutPanel1.Controls.Add(this.btnNewInsertUpdate);
             this.flowLayoutPanel1.Controls.Add(this.btnEditCancel);
             this.flowLayoutPanel1.Controls.Add(this.btnDelete);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 410);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 419);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(430, 32);
             this.flowLayoutPanel1.TabIndex = 11;
@@ -180,7 +180,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(454, 443);
+            this.ClientSize = new System.Drawing.Size(454, 463);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dgvColaboradores);
