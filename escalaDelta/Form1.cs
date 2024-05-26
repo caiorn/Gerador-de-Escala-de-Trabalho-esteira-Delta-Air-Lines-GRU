@@ -144,22 +144,38 @@ namespace escalaDelta {
                         
             var todosDe6hQueTrabalhara = colaboradores.Where(c => c.Trabalha && c.HorasTrabalho == 6);
             Colaborador? HojeATLde6h = null;
-            Colaborador? HojeJFKde6h = null;
+            List<Colaborador> HojeJFKde6h = new List<Colaborador>() ;
+            TimeOnly h18m00 = new TimeOnly(18, 0);
+
+            if (colaboradores.Count(c => c.Trabalha) >= 7) {
+                //antes, pq se for o dia dele do pier, dar preferencia para ele ficar no JFK neste dia coitado.
+                TimeOnly h18m30 = new TimeOnly(18, 30);
+                Colaborador? coitadoQueFicaMaisNoAtl = colaboradores.LastOrDefault(c => c.Trabalha && c.Entrada >= h18m30);
+                if (coitadoQueFicaMaisNoAtl != null) {
+                    JFK_work.Add(coitadoQueFicaMaisNoAtl);
+                }
+            }
 
             if (todosDe6hQueTrabalhara.Count() > 2) {
                 //se ao menos 3 de 6h trabalharao, definir primeiro o pier Justamente.
-                PIER_work = fila_PIER_Present.First(c => c.Trabalha);                
+                PIER_work = fila_PIER_Present.First(c => c.Trabalha && !JFK_work.Contains(c)); ;                
                 HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != PIER_work.Nome);
-                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome && c.Nome != PIER_work.Nome);
+                HojeJFKde6h = fila_ATL_Present
+                    .Where(c => c.Trabalha && c.Entrada <= h18m00 && c.Nome != HojeATLde6h?.Nome  && c.Nome != PIER_work.Nome)
+                    .TakeLast(2)
+                    .ToList();
             } else {
                 HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6);
-                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome);
-                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha && c.Nome != HojeATLde6h?.Nome && c.Nome != HojeJFKde6h?.Nome);
+                HojeJFKde6h = fila_ATL_Present
+                    .Where(c => c.Trabalha && c.Entrada <= h18m00 && c.Nome != HojeATLde6h?.Nome)
+                    .TakeLast(2)
+                    .ToList();
+                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha && c.Nome != HojeATLde6h?.Nome && !HojeJFKde6h.Contains(c));
             }
-            if (HojeATLde6h != null)
+            if (HojeATLde6h != null) {
                 ATL_work.Add(HojeATLde6h);
-            if (HojeJFKde6h != null)
-                JFK_work.Add(HojeJFKde6h);
+            }
+            JFK_work.AddRange(HojeJFKde6h);
 
             //se tiver alguem que trabalha depois da 19h, só fara o pier ou 104
             var colaboradorQueEntraApos19hDisponivel = colaboradores.Where(c =>
@@ -173,11 +189,12 @@ namespace escalaDelta {
             //calculo para dividir a equipe caso ultrapasse de 3 colaborador pra cada
             int qtnTrabalhara = colaboradores.Count(c => c.Trabalha);
             int qtdSobra = qtnTrabalhara % 2;
+           
             //adiciona o restante da fila para trabalhar no voo 104 quem nao está no ATL, JFK e Pier
             var doisPrimeirosFilaATL = fila_ATL_Future.Where(c =>
                 c.Trabalha &&
                 c.Nome != HojeATLde6h?.Nome &&
-                c.Nome != HojeJFKde6h?.Nome &&
+                !JFK_work.Contains(c) &&
                 c.Nome != PIER_work?.Nome
                 ).Take(((qtnTrabalhara - qtdSobra) / 2) - ATL_work.Count); //divisao de turma, caso impar ATL ficará 1 a mais.
             ATL_work.AddRange(doisPrimeirosFilaATL);
@@ -191,7 +208,7 @@ namespace escalaDelta {
             //adiciona o restante pela sequencia para trabalhar no voo 226
             var sobra_JFK = fila_ATL_Future.Where(c =>
             c.Trabalha &&
-            c.Nome != HojeJFKde6h?.Nome &&
+            !JFK_work.Contains(c) &&
             c.Nome != PIER_work.Nome &&
             !ATL_work.Contains(c)
             );
@@ -655,11 +672,11 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
         /// <summary>
         /// Verifica se em determinada data seria folga na escala 6x1 6x2 com base em uma data Inicial.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="dataAVerificar"></param>
         /// <param name="ultimaFolgaUnica">Data de uma folga sozinha, sem dobradinha</param>
         /// <returns></returns>
-        static bool EstaDeFolga6x16x2(DateOnly data, DateOnly ultimaFolgaUnica) {
-            var diferencaDias = Math.Abs(data.DayNumber - ultimaFolgaUnica.DayNumber);
+        static bool EstaDeFolga6x16x2(DateOnly dataAVerificar, DateOnly ultimaFolgaUnica) {
+            var diferencaDias = Math.Abs(dataAVerificar.DayNumber - ultimaFolgaUnica.DayNumber);
             // A cada 15 dias ele folgara 1x denovo
             int diasFuturoSobra = diferencaDias % 15;
             //  A folga dobrada dele é no 7º e 8º Dia.
@@ -690,6 +707,11 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
             //    // Está de folga
             //    return diasNoCiclo != 8; // Se diasNoCiclo for 8, significa que é o segundo dia de folga
             //}
+        }
+
+        private void calendarioToolStripMenuItem_Click(object sender, EventArgs e) {
+            FormCalendar fc = new FormCalendar();
+            fc.Show();
         }
     }
 }
