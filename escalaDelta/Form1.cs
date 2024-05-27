@@ -710,6 +710,10 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
         }
 
         private void calendarioToolStripMenuItem_Click(object sender, EventArgs e) {
+            
+        }
+
+        private void btnShowInCalendar_Click(object sender, EventArgs e) {
             FormCalendar fc = new FormCalendar();
             fc.Show();
         }

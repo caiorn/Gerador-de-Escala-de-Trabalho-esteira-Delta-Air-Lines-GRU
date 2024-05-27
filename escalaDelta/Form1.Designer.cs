@@ -34,6 +34,7 @@
             this.btnEditar = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.cadastrarFuncionarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calendarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.richTextBoxFILAATL = new System.Windows.Forms.RichTextBox();
             this.richTextBoxFILAPIER = new System.Windows.Forms.RichTextBox();
             this.rtxtFuturaFilaPIER = new System.Windows.Forms.RichTextBox();
@@ -55,7 +56,7 @@
             this.listBoxTrabalha = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.calendarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnShowInCalendar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -161,6 +162,13 @@
             this.cadastrarFuncionarioToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
             this.cadastrarFuncionarioToolStripMenuItem.Text = "Funcionario";
             this.cadastrarFuncionarioToolStripMenuItem.Click += new System.EventHandler(this.cadastrarFuncionarioToolStripMenuItem_Click);
+            // 
+            // calendarioToolStripMenuItem
+            // 
+            this.calendarioToolStripMenuItem.Name = "calendarioToolStripMenuItem";
+            this.calendarioToolStripMenuItem.Size = new System.Drawing.Size(76, 20);
+            this.calendarioToolStripMenuItem.Text = "Calendario";
+            this.calendarioToolStripMenuItem.Click += new System.EventHandler(this.calendarioToolStripMenuItem_Click);
             // 
             // richTextBoxFILAATL
             // 
@@ -392,18 +400,22 @@
             this.dateTimePicker1.Size = new System.Drawing.Size(82, 23);
             this.dateTimePicker1.TabIndex = 41;
             // 
-            // calendarioToolStripMenuItem
+            // btnShowInCalendar
             // 
-            this.calendarioToolStripMenuItem.Name = "calendarioToolStripMenuItem";
-            this.calendarioToolStripMenuItem.Size = new System.Drawing.Size(76, 20);
-            this.calendarioToolStripMenuItem.Text = "Calendario";
-            this.calendarioToolStripMenuItem.Click += new System.EventHandler(this.calendarioToolStripMenuItem_Click);
+            this.btnShowInCalendar.Location = new System.Drawing.Point(351, 576);
+            this.btnShowInCalendar.Name = "btnShowInCalendar";
+            this.btnShowInCalendar.Size = new System.Drawing.Size(141, 23);
+            this.btnShowInCalendar.TabIndex = 42;
+            this.btnShowInCalendar.Text = "Exibir em Calendário";
+            this.btnShowInCalendar.UseVisualStyleBackColor = true;
+            this.btnShowInCalendar.Click += new System.EventHandler(this.btnShowInCalendar_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(761, 611);
+            this.Controls.Add(this.btnShowInCalendar);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listBoxTrabalha);
@@ -476,5 +488,6 @@
         private Button button1;
         private DateTimePicker dateTimePicker1;
         private ToolStripMenuItem calendarioToolStripMenuItem;
+        private Button btnShowInCalendar;
     }
 }
