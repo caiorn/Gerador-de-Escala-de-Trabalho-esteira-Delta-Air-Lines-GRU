@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Globalization;
 using System.Linq;
@@ -87,6 +88,10 @@ namespace escalaDelta {
             }
         }
 
+        private void lblMonth_Click(object sender, EventArgs e) {
+
+        }
+
         private void loadUltimasEscalasCalendario() {
             flowLayoutPanel1.Controls.Clear();
             _month = 6;
@@ -97,11 +102,7 @@ namespace escalaDelta {
             DateTime startodTheMonth = new DateTime(_year, _month, 1);
             int day = DateTime.DaysInMonth(_year, _month);
             int week = Convert.ToInt32(startodTheMonth.DayOfWeek.ToString("d")) + 1;
-            //add blank initial calendar
-            for (int i = 1; i < week; i++) {
-                ucDay uc = new ucDay("");
-                flowLayoutPanel1.Controls.Add(uc);
-            }
+           
 
             try {
                 using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
@@ -132,23 +133,38 @@ ORDER BY
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
-                            // Carregar os dados do DataReader para o DataTable
-                            int i = 1;
-                            while (reader.Read()) {
-                                string dataEscala = reader["data"].ToString();
-                                // Formata os valores para exibir somente a hora
-                                int dayEscala = Convert.ToInt32(DateTime.Parse(dataEscala).ToString("dd"));
-                                ucDay uc;
-
-                                //ARRUMAR A CONDICAO, PARA ADICIONAR VAZIO SE TIVER BURACO ENTRE DATAS
-                                if (i == dayEscala) {
-                                    uc = new ucDay(i + "");
-                                } else {
-                                    uc = new ucDay("");
-                                }
+                            //add blank initial calendar
+                            for (int i = 1; i < week; i++) {
+                                ucDay uc = new ucDay("");
                                 flowLayoutPanel1.Controls.Add(uc);
+                            }
+                            for (int i = 1; i <= day; i++) {
 
-                                i++;
+                                if (reader.Read()) {
+                                    string? dataEscala = reader["data"].ToString();
+                                    string? pier = reader["PIER"].ToString()?.Replace(",", "\r\n");
+                                    string? atl = reader["ATL"].ToString()?.Replace(",", "\r\n");
+                                    string? jfk = reader["JFK"].ToString()?.Replace(",", "\r\n");
+                                    string? folga = reader["FOLGA"].ToString()?.Replace(",", "\r\n");
+                                    // Formata os valores para exibir somente a hora
+                                    int dayEscala = Convert.ToInt32(DateTime.Parse(dataEscala).ToString("dd"));
+                                    ucDay uc;
+                                    if (i == dayEscala) {
+                                        uc = new ucDay(i.ToString(), pier, atl, jfk, folga);
+                                        flowLayoutPanel1.Controls.Add(uc);
+                                    } else {
+                                        while (i < dayEscala) {
+                                            uc = new ucDay("");
+                                            flowLayoutPanel1.Controls.Add(uc);
+                                            i++;
+                                        }
+                                        if (i == dayEscala) {
+                                            uc = new ucDay(i.ToString(), pier, atl, jfk, folga);
+                                            flowLayoutPanel1.Controls.Add(uc);
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     }
