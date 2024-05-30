@@ -714,8 +714,20 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
         }
 
         private void btnShowInCalendar_Click(object sender, EventArgs e) {
-            FormCalendar fc = new FormCalendar();
-            fc.Show();
+            //Pega o ultimo mes do datagridview.
+
+            // Verifica se há registros no DataGridView
+            if (dataGridView1.Rows.Count > 0) {
+                // Obtém o valor da primeira célula da coluna 'Data'
+                string dataTexto = dataGridView1.Rows[0].Cells["Data"].Value.ToString();
+
+                // Converte o texto da data para DateTime
+                DateTime data;
+                if (DateTime.TryParseExact(dataTexto, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out data)) {
+                    FormCalendar fc = new FormCalendar(data.Month, data.Year);
+                    fc.Show();
+                }
+            }
         }
     }
 }

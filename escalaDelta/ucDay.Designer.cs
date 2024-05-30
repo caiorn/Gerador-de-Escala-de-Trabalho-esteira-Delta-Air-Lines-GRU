@@ -53,7 +53,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(1, 1);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(178, 140);
+            this.panel1.Size = new System.Drawing.Size(178, 108);
             this.panel1.TabIndex = 0;
             this.panel1.Click += new System.EventHandler(this.panel1_Click);
             // 
@@ -70,7 +70,7 @@
             // 
             this.lblListFolga.AutoSize = true;
             this.lblListFolga.ForeColor = System.Drawing.Color.Red;
-            this.lblListFolga.Location = new System.Drawing.Point(121, 72);
+            this.lblListFolga.Location = new System.Drawing.Point(121, 57);
             this.lblListFolga.Name = "lblListFolga";
             this.lblListFolga.Size = new System.Drawing.Size(46, 45);
             this.lblListFolga.TabIndex = 8;
@@ -80,7 +80,7 @@
             // 
             this.lblListJfk.AutoSize = true;
             this.lblListJfk.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.lblListJfk.Location = new System.Drawing.Point(65, 72);
+            this.lblListJfk.Location = new System.Drawing.Point(61, 57);
             this.lblListJfk.Name = "lblListJfk";
             this.lblListJfk.Size = new System.Drawing.Size(46, 45);
             this.lblListJfk.TabIndex = 7;
@@ -90,7 +90,7 @@
             // 
             this.lblListAtl.AutoSize = true;
             this.lblListAtl.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.lblListAtl.Location = new System.Drawing.Point(7, 72);
+            this.lblListAtl.Location = new System.Drawing.Point(7, 57);
             this.lblListAtl.Name = "lblListAtl";
             this.lblListAtl.Size = new System.Drawing.Size(46, 45);
             this.lblListAtl.TabIndex = 6;
@@ -100,7 +100,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label5.Location = new System.Drawing.Point(122, 47);
+            this.label5.Location = new System.Drawing.Point(121, 38);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(44, 15);
             this.label5.TabIndex = 5;
@@ -110,7 +110,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label4.Location = new System.Drawing.Point(7, 47);
+            this.label4.Location = new System.Drawing.Point(7, 38);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(26, 15);
             this.label4.TabIndex = 4;
@@ -120,7 +120,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label3.Location = new System.Drawing.Point(65, 47);
+            this.label3.Location = new System.Drawing.Point(64, 38);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(24, 15);
             this.label3.TabIndex = 3;
@@ -163,7 +163,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "ucDay";
             this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(180, 142);
+            this.Size = new System.Drawing.Size(180, 110);
             this.Load += new System.EventHandler(this.ucDay_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

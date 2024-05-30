@@ -27,7 +27,7 @@ namespace escalaDelta {
         public ucDay(string day, string pier = "", string atl = "", string jfk = "", string folga = "") {
             InitializeComponent();
             checkBox1.Hide();
-            LoadCustomFont();
+            //LoadCustomFont();
 
             _day = day;
             if (day == "") {
