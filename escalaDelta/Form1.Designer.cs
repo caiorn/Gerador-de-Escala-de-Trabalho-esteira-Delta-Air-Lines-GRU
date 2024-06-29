@@ -402,6 +402,7 @@
             // 
             // btnShowInCalendar
             // 
+            this.btnShowInCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnShowInCalendar.Location = new System.Drawing.Point(351, 576);
             this.btnShowInCalendar.Name = "btnShowInCalendar";
             this.btnShowInCalendar.Size = new System.Drawing.Size(141, 23);

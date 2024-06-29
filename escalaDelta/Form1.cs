@@ -144,8 +144,8 @@ namespace escalaDelta {
                         
             var todosDe6hQueTrabalhara = colaboradores.Where(c => c.Trabalha && c.HorasTrabalho == 6);
             Colaborador? HojeATLde6h = null;
-            List<Colaborador> HojeJFKde6h = new List<Colaborador>() ;
-            TimeOnly h18m00 = new TimeOnly(18, 0);
+            Colaborador? HojeJFKde6h = null;
+            TimeOnly h17m00 = new TimeOnly(17, 0);
 
             if (colaboradores.Count(c => c.Trabalha) >= 7) {
                 //antes, pq se for o dia dele do pier, dar preferencia para ele ficar no JFK neste dia coitado.
@@ -160,28 +160,26 @@ namespace escalaDelta {
                 //se ao menos 3 de 6h trabalharao, definir primeiro o pier Justamente.
                 PIER_work = fila_PIER_Present.First(c => c.Trabalha && !JFK_work.Contains(c)); ;                
                 HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != PIER_work.Nome);
-                HojeJFKde6h = fila_ATL_Present
-                    .Where(c => c.Trabalha && c.Entrada <= h18m00 && c.Nome != HojeATLde6h?.Nome  && c.Nome != PIER_work.Nome)
-                    .TakeLast(2)
-                    .ToList();
+                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome && c.Nome != PIER_work.Nome);                    
             } else {
                 HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6);
-                HojeJFKde6h = fila_ATL_Present
-                    .Where(c => c.Trabalha && c.Entrada <= h18m00 && c.Nome != HojeATLde6h?.Nome)
-                    .TakeLast(2)
-                    .ToList();
-                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha && c.Nome != HojeATLde6h?.Nome && !HojeJFKde6h.Contains(c));
+                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.Entrada <= h17m00 && c.Nome != HojeATLde6h?.Nome);
+                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha && c.Nome != HojeATLde6h?.Nome && c.Nome != HojeJFKde6h?.Nome);
             }
             if (HojeATLde6h != null) {
                 ATL_work.Add(HojeATLde6h);
             }
-            JFK_work.AddRange(HojeJFKde6h);
+            if (HojeJFKde6h != null) {
+                JFK_work.Add(HojeJFKde6h);
+            }
 
-            //se tiver alguem que trabalha depois da 19h, só fara o pier ou 104
+            //se tiver alguem que trabalha depois da 18:30h, só fara o pier ou 104
             var colaboradorQueEntraApos19hDisponivel = colaboradores.Where(c =>
-                c.Entrada?.Hour >= 19 &&
+                c.Entrada?.Hour >= 18 && c.Entrada?.Minute >= 30 &&
                 c.Trabalha &&
-                c.Nome != PIER_work.Nome);
+                c.Nome != PIER_work.Nome &&
+                !ATL_work.Contains(c) &&
+                !JFK_work.Contains(c));
 
             if (colaboradorQueEntraApos19hDisponivel.Count() == 1) {
                 ATL_work.Add(colaboradorQueEntraApos19hDisponivel.First());
@@ -193,9 +191,9 @@ namespace escalaDelta {
             //adiciona o restante da fila para trabalhar no voo 104 quem nao está no ATL, JFK e Pier
             var doisPrimeirosFilaATL = fila_ATL_Future.Where(c =>
                 c.Trabalha &&
-                c.Nome != HojeATLde6h?.Nome &&
-                !JFK_work.Contains(c) &&
-                c.Nome != PIER_work?.Nome
+                c.Nome != PIER_work?.Nome &&
+                !ATL_work.Contains(c) &&
+                !JFK_work.Contains(c) 
                 ).Take(((qtnTrabalhara - qtdSobra) / 2) - ATL_work.Count); //divisao de turma, caso impar ATL ficará 1 a mais.
             ATL_work.AddRange(doisPrimeirosFilaATL);
 
@@ -207,20 +205,18 @@ namespace escalaDelta {
 
             //adiciona o restante pela sequencia para trabalhar no voo 226
             var sobra_JFK = fila_ATL_Future.Where(c =>
-            c.Trabalha &&
-            !JFK_work.Contains(c) &&
-            c.Nome != PIER_work.Nome &&
-            !ATL_work.Contains(c)
-            );
+                c.Trabalha &&
+                c.Nome != PIER_work?.Nome &&
+                !JFK_work.Contains(c) &&
+                !ATL_work.Contains(c)
+                );
             JFK_work.AddRange(sobra_JFK);
+
             //o pier vai para o final da fila PIER
             fila_PIER_Future.Remove(PIER_work);
             fila_PIER_Future.Add(PIER_work);
 
-
-            string saudacao = DateTime.Now.Hour < 12 ? "Bom dia" : (DateTime.Now.Hour < 18 ? "Boa tarde" : "Boa noite");
-
-            string texto =
+            string saudacao = DateTime.Now.Hour < 12 ? "Bom dia" : (DateTime.Now.Hour < 18 ? "Boa tarde" : "Boa noite");            string texto =
 $@"Escala de {dataProximaEscala.ToString("ddd", new CultureInfo("pt-BR"))} {dataProximaEscala.ToString("dd/MM")}
 Pier: 
   {PIER_work.Nome}
