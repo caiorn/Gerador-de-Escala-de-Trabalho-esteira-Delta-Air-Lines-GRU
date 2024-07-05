@@ -631,9 +631,18 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
                     datasSelecionadas.Add(data);
                 }
             }
-            var datasStr = string.Join(Environment.NewLine, datasSelecionadas);
+            //ordenando
+            List<DateOnly> datasList = new List<DateOnly>(datasSelecionadas);
+            datasList.Sort();
+            
+            int numColunas = datasList.Count > 100 ? 5 : 
+                             (datasList.Count > 50 ? 4 : 
+                             (datasList.Count > 30 ? 3 : 2) ); 
+            string message = FormatItems(datasList, numColunas);
 
-            var dialogResult = MessageBox.Show($"Certeza que deseja excluir a escalas seguintes:\r\n{datasStr}", "Confirme", MessageBoxButtons.YesNo);
+            //var datasStr = string.Join(Environment.NewLine, datasSelecionadas);
+
+            var dialogResult = MessageBox.Show($"Certeza que deseja excluir a escalas seguintes:\r\n{message}", "Confirme", MessageBoxButtons.YesNo);
             if (dialogResult != DialogResult.Yes) {
                 return;
             }
@@ -654,15 +663,17 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            //DateOnly[] folgas = { new DateOnly(2024, 04, 01), new DateOnly(2024, 04, 02) };
-            //if (EstaDeFolga(DateOnly.FromDateTime(dateTimePicker1.Value), folgas)) {
+            DateOnly dataGerarAte = DateOnly.FromDateTime(dateTimePicker1.Value);
+            DateOnly ultimaEscalaGerada = dataProximaEscala;
+            while (ultimaEscalaGerada <= dataGerarAte) {
+                ultimaEscalaGerada = ultimaEscalaGerada.AddDays(1);
+                btnSalvarEscala.PerformClick();
+            }
+            //DateOnly ultimaFolgaUnica = new DateOnly(2024, 04, 12);
+            //if (EstaDeFolga6x16x2(DateOnly.FromDateTime(dateTimePicker1.Value), ultimaFolgaUnica)) {
             //    MessageBox.Show("Está de folga");
             //}
-            DateOnly ultimaFolgaUnica = new DateOnly(2024, 04, 12);
-            if (EstaDeFolga6x16x2(DateOnly.FromDateTime(dateTimePicker1.Value), ultimaFolgaUnica)) {
-                MessageBox.Show("Está de folga");
-            }
-            dateTimePicker1.Value = dateTimePicker1.Value.AddDays(1);
+            //dateTimePicker1.Value = dateTimePicker1.Value.AddDays(1);
         }
 
         /// <summary>
@@ -724,6 +735,34 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
                     fc.Show();
                 }
             }
+        }
+
+        private static string FormatItems<T>(IEnumerable<T> items, int numColunas) {
+            List<T> itemList = new List<T>(items);
+            int partSize = (itemList.Count + numColunas - 1) / numColunas; // Arredondar para cima
+
+            // Criação de listas de sublistas
+            List<List<T>> colunas = new List<List<T>>();
+            for (int i = 0; i < numColunas; i++) {
+                int startIndex = i * partSize;
+                int count = Math.Min(partSize, itemList.Count - startIndex);
+                colunas.Add(itemList.GetRange(startIndex, count));
+            }
+
+            string formattedString = "";
+            for (int i = 0; i < partSize; i++) {
+                List<string> row = new List<string>();
+                for (int j = 0; j < numColunas; j++) {
+                    if (i < colunas[j].Count) {
+                        row.Add(colunas[j][i]?.ToString() ?? "");
+                    } else {
+                        row.Add("");
+                    }
+                }
+                formattedString += string.Join("\t", row) + "\n";
+            }
+
+            return formattedString;
         }
     }
 }

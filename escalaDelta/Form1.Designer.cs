@@ -152,7 +152,7 @@
             this.calendarioToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(761, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(839, 24);
             this.menuStrip1.TabIndex = 20;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -241,7 +241,7 @@
             this.rtxtProximaEscala.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.rtxtProximaEscala.Location = new System.Drawing.Point(416, 95);
             this.rtxtProximaEscala.Name = "rtxtProximaEscala";
-            this.rtxtProximaEscala.Size = new System.Drawing.Size(110, 171);
+            this.rtxtProximaEscala.Size = new System.Drawing.Size(110, 172);
             this.rtxtProximaEscala.TabIndex = 27;
             this.rtxtProximaEscala.Text = "";
             // 
@@ -277,7 +277,7 @@
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.rtxtFuturaFilaPIER);
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox2.Location = new System.Drawing.Point(532, 74);
+            this.groupBox2.Location = new System.Drawing.Point(627, 77);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(200, 222);
             this.groupBox2.TabIndex = 30;
@@ -384,20 +384,20 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(451, 295);
+            this.button1.Location = new System.Drawing.Point(532, 95);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(86, 23);
             this.button1.TabIndex = 40;
-            this.button1.Text = "button1";
+            this.button1.Text = "Gerar Até";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // dateTimePicker1
             // 
             this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePicker1.Location = new System.Drawing.Point(363, 299);
+            this.dateTimePicker1.Location = new System.Drawing.Point(532, 124);
             this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(82, 23);
+            this.dateTimePicker1.Size = new System.Drawing.Size(86, 23);
             this.dateTimePicker1.TabIndex = 41;
             // 
             // btnShowInCalendar
@@ -415,7 +415,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(761, 611);
+            this.ClientSize = new System.Drawing.Size(839, 611);
             this.Controls.Add(this.btnShowInCalendar);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.button1);
