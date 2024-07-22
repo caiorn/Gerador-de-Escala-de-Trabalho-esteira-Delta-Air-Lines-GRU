@@ -12,25 +12,18 @@ namespace escalaDelta {
            [x] Deve haver sempre que possivel ao menos um colaborador de 6h no ATL e JFK
            [x] O Pier é Rotativo
            [x] O Voo ATL é Rotativo
-           [ ] Quem entrar as 19h só irá trabalhar no Pier ou ATL
-            
+           [ ] Quem entrar as 19h só irá trabalhar no Pier ou ATL           
 
         Algoritimo:
             O algoritimo se baseia em filas,
             Foi criado 2 filas ATL e PIER
             O primeiro da fila do PIER fará o pier e irá para o fim da fila.
              Salvo se o primeiro da fila, somente se for o único de 6h para fazer o ATL.
-            Os primeiros da fila ATL farão o VOO,
-
+            Os primeiros da fila ATL farão o VOO
      */
-
 
     public partial class Form1 : Form {
 
-        //[] arrumar o vinculo de quem trabalha hoje
-        //[] armazenar no banco de dados.
-
-        // Caminho do banco de dados
         public static string caminhoBancoDados = "database.db";
         public static string connectionString = $"Data Source={caminhoBancoDados}";
         public static List<Colaborador> colaboradores { get; set; }
@@ -226,9 +219,7 @@ Pier:
   {string.Join("\r\n  ", ATL_work.Select(c => c.Nome))}
 ";
             rtxtProximaEscala.Text = texto;
-
             atualizarRichTextBoxFuturasFilas();
-
         }
 
         private void atualizarRichTextBoxFuturasFilas() {
@@ -662,7 +653,7 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
             }
         }
 
-        private void button1_Click(object sender, EventArgs e) {
+        private void btnGerarAte_Click(object sender, EventArgs e) {
             DateOnly dataGerarAte = DateOnly.FromDateTime(dateTimePicker1.Value);
             DateOnly ultimaEscalaGerada = dataProximaEscala;
             while (ultimaEscalaGerada <= dataGerarAte) {
@@ -692,28 +683,6 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
                 return true;
             } else { return false; }
 
-
-
-            //while (data > dataUltimaFolgaDobradinha) {
-
-            //    var proxFolgaDe1Dia = dataUltimaFolgaDobradinha.AddDays(7);
-            //    var proxFolgaDe2DiaFirst = dataUltimaFolgaDobradinha.AddDays(7);
-            //    var proxFolgaDe2DiaSecon = dataUltimaFolgaDobradinha.AddDays(1);
-            //}
-
-            //TimeSpan diferenca = data - datasFolga[0];
-            //int diasDesdeFolga = (int)diferenca.TotalDays;
-
-            //int diasNoCiclo = diasDesdeFolga % 9; // 6 dias de trabalho + 1 ou 2 dias de folga
-            //int diaDaSemana = (int)data.DayOfWeek; // 0 = domingo, 1 = segunda, ..., 6 = sábado
-
-            //if (diasNoCiclo < 6) {
-            //    // Está trabalhando nos dias de semana
-            //    return diaDaSemana >= 1 && diaDaSemana <= 5;
-            //} else {
-            //    // Está de folga
-            //    return diasNoCiclo != 8; // Se diasNoCiclo for 8, significa que é o segundo dia de folga
-            //}
         }
 
         private void calendarioToolStripMenuItem_Click(object sender, EventArgs e) {

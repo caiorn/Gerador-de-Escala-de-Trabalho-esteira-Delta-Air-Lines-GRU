@@ -1,4 +1,5 @@
-﻿using System;
+﻿using escalaDelta.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,6 +21,9 @@ namespace escalaDelta {
 
         public FormCalendar(int mes, int ano) {
             InitializeComponent();
+
+            flowLayoutPanel1.WrapContents = true; // Permite que os controles quebrem linha
+
             _month = mes;
             _year = ano;
             /* size form 1303; 938 
@@ -53,6 +57,25 @@ namespace escalaDelta {
 
         private void lblMonth_Click(object sender, EventArgs e) {
 
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e) {
+
+            var old = FormBorderStyle;
+            this.FormBorderStyle = FormBorderStyle.None;
+            try {
+                var image = this.CaptureScreenFullForm();
+                Clipboard.SetImage(image);
+                if (image == null) {
+                    MessageBox.Show("Não foi possível capturar a imagem do formulário.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                Clipboard.SetImage(image);
+            } catch (Exception ex) {
+                MessageBox.Show($"Erro ao copiar para a área de transferência: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            } finally {
+                this.FormBorderStyle = old;
+            }
         }
 
         private void loadUltimasEscalasCalendario() {
@@ -124,8 +147,15 @@ ORDER BY
                                         }
                                     }
                                 }
-
                             }
+
+                            //ajusta a altura do formulário para mostrar todos cards
+                            Control cardExample = flowLayoutPanel1.Controls[0];
+                            int totalCards = flowLayoutPanel1.Controls.Count;
+                            int tuplas = (int)Math.Ceiling(totalCards / 7.0);
+                            int marginHeight = tuplas * (cardExample.Margin.Top + cardExample.Margin.Bottom);
+                            int bestHeight = ((tuplas* cardExample.Height) +marginHeight)-flowLayoutPanel1.Height;
+                            this.Height += bestHeight;
                         }
                     }
                     // Fechar a conexão com o banco de dados
@@ -135,5 +165,6 @@ ORDER BY
                 MessageBox.Show("Ocorreu um erro ao obter os dados dos colaboradores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+            
     }
 }

@@ -34,7 +34,6 @@
             this.btnEditar = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.cadastrarFuncionarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.calendarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.richTextBoxFILAATL = new System.Windows.Forms.RichTextBox();
             this.richTextBoxFILAPIER = new System.Windows.Forms.RichTextBox();
             this.rtxtFuturaFilaPIER = new System.Windows.Forms.RichTextBox();
@@ -54,7 +53,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.listBoxOutros = new System.Windows.Forms.ListBox();
             this.listBoxTrabalha = new System.Windows.Forms.ListBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnGerarAte = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.btnShowInCalendar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -148,8 +147,7 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cadastrarFuncionarioToolStripMenuItem,
-            this.calendarioToolStripMenuItem});
+            this.cadastrarFuncionarioToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(839, 24);
@@ -162,13 +160,6 @@
             this.cadastrarFuncionarioToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
             this.cadastrarFuncionarioToolStripMenuItem.Text = "Funcionario";
             this.cadastrarFuncionarioToolStripMenuItem.Click += new System.EventHandler(this.cadastrarFuncionarioToolStripMenuItem_Click);
-            // 
-            // calendarioToolStripMenuItem
-            // 
-            this.calendarioToolStripMenuItem.Name = "calendarioToolStripMenuItem";
-            this.calendarioToolStripMenuItem.Size = new System.Drawing.Size(76, 20);
-            this.calendarioToolStripMenuItem.Text = "Calendario";
-            this.calendarioToolStripMenuItem.Click += new System.EventHandler(this.calendarioToolStripMenuItem_Click);
             // 
             // richTextBoxFILAATL
             // 
@@ -382,15 +373,15 @@
             this.listBoxTrabalha.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
             this.listBoxTrabalha.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseDown);
             // 
-            // button1
+            // btnGerarAte
             // 
-            this.button1.Location = new System.Drawing.Point(532, 95);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(86, 23);
-            this.button1.TabIndex = 40;
-            this.button1.Text = "Gerar Até";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnGerarAte.Location = new System.Drawing.Point(532, 95);
+            this.btnGerarAte.Name = "btnGerarAte";
+            this.btnGerarAte.Size = new System.Drawing.Size(86, 23);
+            this.btnGerarAte.TabIndex = 40;
+            this.btnGerarAte.Text = "Gerar Até";
+            this.btnGerarAte.UseVisualStyleBackColor = true;
+            this.btnGerarAte.Click += new System.EventHandler(this.btnGerarAte_Click);
             // 
             // dateTimePicker1
             // 
@@ -418,7 +409,7 @@
             this.ClientSize = new System.Drawing.Size(839, 611);
             this.Controls.Add(this.btnShowInCalendar);
             this.Controls.Add(this.dateTimePicker1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnGerarAte);
             this.Controls.Add(this.listBoxTrabalha);
             this.Controls.Add(this.listBoxOutros);
             this.Controls.Add(this.label6);
@@ -486,9 +477,8 @@
         private Label label6;
         private ListBox listBoxOutros;
         private ListBox listBoxTrabalha;
-        private Button button1;
+        private Button btnGerarAte;
         private DateTimePicker dateTimePicker1;
-        private ToolStripMenuItem calendarioToolStripMenuItem;
         private Button btnShowInCalendar;
     }
 }
