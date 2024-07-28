@@ -156,6 +156,7 @@ ORDER BY
                             int marginHeight = tuplas * (cardExample.Margin.Top + cardExample.Margin.Bottom);
                             int bestHeight = ((tuplas* cardExample.Height) +marginHeight)-flowLayoutPanel1.Height;
                             this.Height += bestHeight;
+                            CenterToScreen();
                         }
                     }
                     // Fechar a conexão com o banco de dados
@@ -165,6 +166,6 @@ ORDER BY
                 MessageBox.Show("Ocorreu um erro ao obter os dados dos colaboradores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-            
+
     }
 }
