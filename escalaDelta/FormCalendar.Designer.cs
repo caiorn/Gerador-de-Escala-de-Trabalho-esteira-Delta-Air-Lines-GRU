@@ -26,6 +26,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCalendar));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.panel9 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.lblMonth = new System.Windows.Forms.Label();
@@ -35,12 +41,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.panel5 = new System.Windows.Forms.Panel();
-            this.panel6 = new System.Windows.Forms.Panel();
-            this.panel7 = new System.Windows.Forms.Panel();
-            this.panel8 = new System.Windows.Forms.Panel();
-            this.panel9 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -66,8 +66,50 @@
             // 
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(180, 142);
+            this.panel1.Size = new System.Drawing.Size(180, 168);
             this.panel1.TabIndex = 0;
+            // 
+            // panel4
+            // 
+            this.panel4.Location = new System.Drawing.Point(189, 3);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(180, 168);
+            this.panel4.TabIndex = 1;
+            // 
+            // panel5
+            // 
+            this.panel5.Location = new System.Drawing.Point(375, 3);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(180, 168);
+            this.panel5.TabIndex = 2;
+            // 
+            // panel6
+            // 
+            this.panel6.Location = new System.Drawing.Point(561, 3);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(180, 168);
+            this.panel6.TabIndex = 3;
+            // 
+            // panel7
+            // 
+            this.panel7.Location = new System.Drawing.Point(747, 3);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(180, 168);
+            this.panel7.TabIndex = 4;
+            // 
+            // panel8
+            // 
+            this.panel8.Location = new System.Drawing.Point(933, 3);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(180, 168);
+            this.panel8.TabIndex = 5;
+            // 
+            // panel9
+            // 
+            this.panel9.Location = new System.Drawing.Point(1119, 3);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(180, 168);
+            this.panel9.TabIndex = 6;
             // 
             // label1
             // 
@@ -162,48 +204,6 @@
             this.label6.Text = "Sábado";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // panel4
-            // 
-            this.panel4.Location = new System.Drawing.Point(189, 3);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(180, 142);
-            this.panel4.TabIndex = 1;
-            // 
-            // panel5
-            // 
-            this.panel5.Location = new System.Drawing.Point(375, 3);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(180, 142);
-            this.panel5.TabIndex = 2;
-            // 
-            // panel6
-            // 
-            this.panel6.Location = new System.Drawing.Point(561, 3);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(180, 142);
-            this.panel6.TabIndex = 3;
-            // 
-            // panel7
-            // 
-            this.panel7.Location = new System.Drawing.Point(747, 3);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(180, 142);
-            this.panel7.TabIndex = 4;
-            // 
-            // panel8
-            // 
-            this.panel8.Location = new System.Drawing.Point(933, 3);
-            this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(180, 142);
-            this.panel8.TabIndex = 5;
-            // 
-            // panel9
-            // 
-            this.panel9.Location = new System.Drawing.Point(1119, 3);
-            this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(180, 142);
-            this.panel9.TabIndex = 6;
-            // 
             // FormCalendar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -222,6 +222,7 @@
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "FormCalendar";
             this.Text = "FormCalendar";
+            this.Load += new System.EventHandler(this.FormCalendar_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

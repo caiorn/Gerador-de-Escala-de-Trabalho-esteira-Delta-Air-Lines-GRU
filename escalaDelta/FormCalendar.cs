@@ -61,8 +61,8 @@ namespace escalaDelta {
 
         private void pictureBox1_Click(object sender, EventArgs e) {
 
-            var old = FormBorderStyle;
-            this.FormBorderStyle = FormBorderStyle.None;
+            //var old = FormBorderStyle;
+            //this.FormBorderStyle = FormBorderStyle.None;
             try {
                 var image = this.CaptureScreenFullForm();
                 Clipboard.SetImage(image);
@@ -74,8 +74,12 @@ namespace escalaDelta {
             } catch (Exception ex) {
                 MessageBox.Show($"Erro ao copiar para a área de transferência: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             } finally {
-                this.FormBorderStyle = old;
+                //this.FormBorderStyle = old;
             }
+        }
+
+        private void FormCalendar_Load(object sender, EventArgs e) {
+
         }
 
         private void loadUltimasEscalasCalendario() {
@@ -97,9 +101,11 @@ namespace escalaDelta {
                             SELECT 
     ct.data,
     GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'PIER' THEN c.nome ELSE NULL END) AS PIER,
-    GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'ATL' THEN ' ' || c.nome ELSE NULL END) AS ATL,
+    GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'ATL' THEN ' ' || c.nome  ELSE NULL END) AS ATL,
     GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'JFK' THEN ' ' || c.nome ELSE NULL END) AS JFK,
-    GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'FOLGA' THEN c.nome ELSE NULL END) AS FOLGA
+    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 1) THEN c.nome  ELSE NULL END) AS FOLGA_AUXILIARES,
+    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 2 ) THEN ' ' || c.nome ELSE NULL END) AS LIDERES,
+    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES
 FROM 
     ColaboradorTrabalho ct
 LEFT JOIN 
@@ -128,12 +134,14 @@ ORDER BY
                                     string? pier = reader["PIER"].ToString()?.Replace(",", "\r\n");
                                     string? atl = reader["ATL"].ToString()?.Replace(",", "\r\n");
                                     string? jfk = reader["JFK"].ToString()?.Replace(",", "\r\n");
-                                    string? folga = reader["FOLGA"].ToString()?.Replace(",", "\r\n");
+                                    string? folga_auxiliares = reader["FOLGA_AUXILIARES"].ToString()?.Replace(",", "\r\n");
+                                    string? lideres = reader["LIDERES"].ToString();
+                                    string? folga_lideres = reader["FOLGA_LIDERES"].ToString()?.Replace(",", "\r\n");
                                     // Formata os valores para exibir somente a hora
                                     int dayEscala = Convert.ToInt32(DateTime.Parse(dataEscala).ToString("dd"));
                                     ucDay uc;
                                     if (i == dayEscala) {
-                                        uc = new ucDay(i.ToString(), pier, atl, jfk, folga);
+                                        uc = new ucDay(i.ToString(), pier, atl, jfk, folga_auxiliares, lideres, folga_lideres);
                                         flowLayoutPanel1.Controls.Add(uc);
                                     } else {
                                         while (i < dayEscala) {
@@ -142,7 +150,7 @@ ORDER BY
                                             i++;
                                         }
                                         if (i == dayEscala) {
-                                            uc = new ucDay(i.ToString(), pier, atl, jfk, folga);
+                                            uc = new ucDay(i.ToString(), pier, atl, jfk, folga_auxiliares, lideres, folga_lideres);
                                             flowLayoutPanel1.Controls.Add(uc);
                                         }
                                     }

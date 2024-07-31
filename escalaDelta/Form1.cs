@@ -68,7 +68,9 @@ namespace escalaDelta {
                            ("PIER", 12),
                            ("ATL", 30),
                            ("JFK", 30),
-                           ("FOLGA", 25)
+                           ("LIDERES", 30),
+                           ("FOLGA_AUXILIARES", 25),
+                           ("FOLGA_LIDERES", 25)
            );
         }
 
@@ -130,24 +132,27 @@ namespace escalaDelta {
             PIER_work = null;
             ATL_work = new List<Colaborador>();
             JFK_work = new List<Colaborador>();
+            List<Colaborador> auxiliares = colaboradores.Where(c => c.Cargo?.Id == 1).ToList();
+            List<Colaborador> lideres = colaboradores.Where(c => c.Cargo?.Id == 2).ToList();
+
 
             fila_PIER_Future = fila_PIER_Present.ToList();
             fila_ATL_Future = fila_ATL_Present.ToList();
 
                         
-            var todosDe6hQueTrabalhara = colaboradores.Where(c => c.Trabalha && c.HorasTrabalho == 6);
+            var todosDe6hQueTrabalhara = auxiliares.Where(c => c.Trabalha && c.HorasTrabalho == 6);
             Colaborador? HojeATLde6h = null;
             Colaborador? HojeJFKde6h = null;
             TimeOnly h17m00 = new TimeOnly(17, 0);
 
-            if (colaboradores.Count(c => c.Trabalha) >= 7) {
-                //antes, pq se for o dia dele do pier, dar preferencia para ele ficar no JFK neste dia coitado.
-                TimeOnly h18m30 = new TimeOnly(18, 30);
-                Colaborador? coitadoQueFicaMaisNoAtl = colaboradores.LastOrDefault(c => c.Trabalha && c.Entrada >= h18m30);
-                if (coitadoQueFicaMaisNoAtl != null) {
-                    JFK_work.Add(coitadoQueFicaMaisNoAtl);
-                }
-            }
+            //if (auxiliares.Count(c => c.Trabalha) >= 7) {
+            //    //antes, pq se for o dia dele do pier, dar preferencia para ele ficar no JFK neste dia coitado.
+            //    TimeOnly h18m30 = new TimeOnly(18, 30);
+            //    Colaborador? coitadoQueFicaMaisNoAtl = auxiliares.LastOrDefault(c => c.Trabalha && c.Entrada >= h18m30);
+            //    if (coitadoQueFicaMaisNoAtl != null) {
+            //        JFK_work.Add(coitadoQueFicaMaisNoAtl);
+            //    }
+            //}
 
             if (todosDe6hQueTrabalhara.Count() > 2) {
                 //se ao menos 3 de 6h trabalharao, definir primeiro o pier Justamente.
@@ -166,19 +171,21 @@ namespace escalaDelta {
                 JFK_work.Add(HojeJFKde6h);
             }
 
-            //se tiver alguem que trabalha depois da 18:30h, só fara o pier ou 104
-            var colaboradorQueEntraApos19hDisponivel = colaboradores.Where(c =>
-                c.Entrada?.Hour >= 18 && c.Entrada?.Minute >= 30 &&
-                c.Trabalha &&
-                c.Nome != PIER_work.Nome &&
-                !ATL_work.Contains(c) &&
-                !JFK_work.Contains(c));
+            //se tiver 3 de cada lado + pier e se tiver alguem que trabalha depois da 18:30h, só fara o pier ou 104 
+            if (auxiliares.Count(c => c.Trabalha) >= 7) {
+                var colaboradorQueEntraApos19hDisponivel = auxiliares.Where(c =>
+                    c.Entrada?.Hour >= 18 && c.Entrada?.Minute >= 30 &&
+                    c.Trabalha &&
+                    c.Nome != PIER_work.Nome &&
+                    !ATL_work.Contains(c) &&
+                    !JFK_work.Contains(c));
 
-            if (colaboradorQueEntraApos19hDisponivel.Count() == 1) {
-                ATL_work.Add(colaboradorQueEntraApos19hDisponivel.First());
+                if (colaboradorQueEntraApos19hDisponivel.Count() == 1) {
+                    ATL_work.Add(colaboradorQueEntraApos19hDisponivel.First());
+                }
             }
             //calculo para dividir a equipe caso ultrapasse de 3 colaborador pra cada
-            int qtnTrabalhara = colaboradores.Count(c => c.Trabalha);
+            int qtnTrabalhara = auxiliares.Count(c => c.Trabalha);
             int qtdSobra = qtnTrabalhara % 2;
            
             //adiciona o restante da fila para trabalhar no voo 104 quem nao está no ATL, JFK e Pier
@@ -326,11 +333,26 @@ Pier:
         }
 
         private void loadColaboradores() {
+            List<Cargo> cargos = new List<Cargo>();
             colaboradores = new List<Colaborador>();
             try {
+                //carrega lideres
                 using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                     connection.Open();
-                    string query = "SELECT * FROM Colaborador WHERE deletado IS NULL;";
+                    string query = "SELECT * FROM Cargo";
+                    using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
+                        using (SQLiteDataReader reader = command.ExecuteReader()) {
+                            while (reader.Read()) {
+                                cargos.Add(new Cargo() {
+                                    Id = Convert.ToInt32(reader["id"]),
+                                    Funcao = (string)reader["funcao"]
+                                });
+                            }
+                        }
+                    }
+
+
+                    query = "SELECT * FROM Colaborador WHERE deletado IS NULL;";
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
@@ -342,9 +364,12 @@ Pier:
                                 Colaborador colaborador = new Colaborador();
                                 colaborador.Id = Convert.ToInt32(reader["id"]);
                                 colaborador.Nome = (string)reader["nome"];
-                                colaborador.Entrada = new TimeOnly(entrada.Hour, entrada.Minute);
-                                colaborador.Saida = new TimeOnly(saida.Hour, saida.Minute);
+                                colaborador.Entrada = new TimeOnly(entrada.Hour, entrada.Minute);                                
+                                colaborador.Saida = new TimeOnly(saida.Hour, saida.Minute);                                
                                 colaborador.DataBaseFolga1Dia = dataFolgaBase;
+
+                                colaborador.Cargo = cargos.FirstOrDefault(c => c.Id == Convert.ToInt32(reader["id_cargo"]));
+                                
                                 //colaborador.UltimoDiaFolga = new DateOnly(ultimoDiaFolga.Year, ultimoDiaFolga.Month, ultimoDiaFolga.Day);
 
                                 colaboradores.Add(colaborador);
@@ -367,7 +392,7 @@ Pier:
 
                     // Comando SQL para selecionar todos os colaboradores
                     string query = @"
-                            SELECT 
+                             SELECT 
                                 CASE strftime('%w', ct.data)
                                         WHEN '0' THEN 'Dom'
                                         WHEN '1' THEN 'Seg'
@@ -382,7 +407,9 @@ Pier:
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'PIER' THEN c.nome ELSE NULL END) AS PIER,
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'ATL' THEN ' ' || c.nome  ELSE NULL END) AS ATL,
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'JFK' THEN ' ' || c.nome ELSE NULL END) AS JFK,
-                                GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'FOLGA' THEN c.nome  ELSE NULL END) AS FOLGA
+                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 1) THEN c.nome  ELSE NULL END) AS FOLGA_AUXILIARES,
+                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 2 ) THEN ' ' || c.nome ELSE NULL END) AS LIDERES,
+                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES
                             FROM 
                                 ColaboradorTrabalho ct
                             LEFT JOIN 
@@ -390,7 +417,8 @@ Pier:
                             GROUP BY 
                                 DATE(ct.data)
                             ORDER BY 
-                                ct.data DESC;";
+                                ct.data DESC;
+";
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
@@ -411,8 +439,8 @@ Pier:
 
         //Define a fila recente com base nos ultimos registros.
         private void loadSetUpQueueATLandPIER() {
-            fila_ATL_Present = colaboradores.ToList();
-            fila_PIER_Present = colaboradores.ToList();
+            fila_ATL_Present = colaboradores.Where(c => c.Cargo?.Id == 1).ToList();
+            fila_PIER_Present = colaboradores.Where(c => c.Cargo?.Id == 1).ToList();
             try {
                 using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                     connection.Open();
@@ -463,13 +491,23 @@ Pier:
 
                 // Criação da tabela Colaborador
                 using (var cmd = new SQLiteCommand(
+                    "CREATE TABLE IF NOT EXISTS Cargo (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "Funcao TEXT)", conexao)) {
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Criação da tabela Colaborador
+                using (var cmd = new SQLiteCommand(
                     "CREATE TABLE IF NOT EXISTS Colaborador (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "id_cargo INTEGER,"+
                     "nome TEXT," +
                     "hora_entrada DATETIME," +
                     "hora_saida DATETIME," +
                     "data_dia_folga_unica DATE," +
-                    "deletado DATE)", conexao)) {
+                    "deletado DATE,"+
+                    "FOREIGN KEY (id_cargo) REFERENCES Cargo(id))", conexao)) {
                     cmd.ExecuteNonQuery();
                 }
 
@@ -484,19 +522,28 @@ Pier:
                     cmd.ExecuteNonQuery();
                 }
 
-                //default insert
+                //default inserts
                 using (var cmd = new SQLiteCommand(@"
-INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_folga_unica) 
-    VALUES 
-    (1, 'CAIO', '18:30', '22:30', '2024-03-16'),
-    (2, 'LUCIUS', '18:30', '22:30', '2024-03-17'),
-    (3, 'ROMARIO', '18:00', '22:00', '2024-03-18'),
-    (4, 'LEONARDO', '19:00', '23:00', '2024-03-19'),
-    (5, 'WESLEY', '17:50', '21:50', '2024-03-20'),
-    (6, 'AZEVEDO', '17:00', '23:00', '2024-03-21'),
-    (7, 'RUBENS', '17:00', '23:00', '2024-03-22'),
-    (8, 'IGOR', '17:00', '23:00', '2024-03-23')
-", conexao)) {
+    INSERT OR IGNORE INTO Cargo (id, funcao) 
+        VALUES 
+        (1, 'Auxiliar'),
+        (2, 'Lider')
+    ", conexao)) {
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (var cmd = new SQLiteCommand(@"
+    INSERT OR IGNORE INTO Colaborador (id, id_cargo, nome, hora_entrada, hora_saida, data_dia_folga_unica) 
+        VALUES 
+        (1, 1, 'CAIO', '18:30', '22:30', '2024-03-16'),
+        (2, 1, 'LUCIUS', '18:30', '22:30', '2024-03-17'),
+        (3, 1, 'ROMARIO', '18:00', '22:00', '2024-03-18'),
+        (4, 1, 'LEONARDO', '19:00', '23:00', '2024-03-19'),
+        (5, 1, 'WESLEY', '17:50', '21:50', '2024-03-20'),
+        (6, 1, 'AZEVEDO', '17:00', '23:00', '2024-03-21'),
+        (7, 1, 'RUBENS', '17:00', '23:00', '2024-03-22'),
+        (8, 1, 'IGOR', '17:00', '23:00', '2024-03-23')
+    ", conexao)) {
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -565,6 +612,19 @@ INSERT OR IGNORE INTO Colaborador (id, nome, hora_entrada, hora_saida, data_dia_
                         cmd.Parameters.AddWithValue("@localTrabalho", "OUTROS");
                         cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                         cmd.ExecuteNonQuery();
+                    }
+
+                    //lideres
+                    foreach (Colaborador colaborador in colaboradores) {
+                        if (!colaborador.Folga) {
+                            if (colaborador.Cargo?.Id == 2) {
+                                cmd.Parameters.Clear();
+                                cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
+                                cmd.Parameters.AddWithValue("@localTrabalho", "");
+                                cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
                     }
                 }
             }

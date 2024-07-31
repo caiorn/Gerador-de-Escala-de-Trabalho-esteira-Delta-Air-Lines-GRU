@@ -16,7 +16,7 @@ namespace escalaDelta {
         public bool NaoTrabalhaPorOutrosMotivos { get; set; }
         public bool Trabalha => VerificaSeTrabalha();
         public int HorasTrabalho => CalcularHorasTrabalho(); // Propriedade de apenas leitura para calcular as horas de trabalho
-
+        public Cargo? Cargo { get; set; }
 
         public Colaborador() {
 

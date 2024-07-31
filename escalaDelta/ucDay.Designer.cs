@@ -24,8 +24,11 @@
         /// </summary>
         private void InitializeComponent() {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblPier = new System.Windows.Forms.Label();
+            this.lblFolgaLideres = new System.Windows.Forms.Label();
+            this.lblLideres = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.lblListFolga = new System.Windows.Forms.Label();
+            this.lblPier = new System.Windows.Forms.Label();
             this.lblListJfk = new System.Windows.Forms.Label();
             this.lblListAtl = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -40,6 +43,9 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.White;
+            this.panel1.Controls.Add(this.lblFolgaLideres);
+            this.panel1.Controls.Add(this.lblLideres);
+            this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.lblListFolga);
             this.panel1.Controls.Add(this.lblPier);
             this.panel1.Controls.Add(this.lblListJfk);
@@ -53,18 +59,43 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(1, 1);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(178, 108);
+            this.panel1.Size = new System.Drawing.Size(178, 157);
             this.panel1.TabIndex = 0;
             this.panel1.Click += new System.EventHandler(this.panel1_Click);
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
-            // lblPier
+            // lblFolgaLideres
             // 
-            this.lblPier.AutoSize = true;
-            this.lblPier.Location = new System.Drawing.Point(94, 15);
-            this.lblPier.Name = "lblPier";
-            this.lblPier.Size = new System.Drawing.Size(46, 15);
-            this.lblPier.TabIndex = 9;
-            this.lblPier.Text = "Nome1";
+            this.lblFolgaLideres.AutoSize = true;
+            this.lblFolgaLideres.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblFolgaLideres.ForeColor = System.Drawing.Color.Red;
+            this.lblFolgaLideres.Location = new System.Drawing.Point(122, 127);
+            this.lblFolgaLideres.Name = "lblFolgaLideres";
+            this.lblFolgaLideres.Size = new System.Drawing.Size(43, 26);
+            this.lblFolgaLideres.TabIndex = 11;
+            this.lblFolgaLideres.Text = "Nome1\r\nNome2";
+            // 
+            // lblLideres
+            // 
+            this.lblLideres.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblLideres.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblLideres.Location = new System.Drawing.Point(7, 126);
+            this.lblLideres.Name = "lblLideres";
+            this.lblLideres.Size = new System.Drawing.Size(109, 30);
+            this.lblLideres.TabIndex = 11;
+            this.lblLideres.Text = "Nome1, Nome2, Nome3, Nome4";
+            // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label6.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label6.Location = new System.Drawing.Point(9, 109);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(160, 15);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "LIDERES";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblListFolga
             // 
@@ -75,6 +106,15 @@
             this.lblListFolga.Size = new System.Drawing.Size(46, 45);
             this.lblListFolga.TabIndex = 8;
             this.lblListFolga.Text = "Nome1\r\nNome2\r\nNome3";
+            // 
+            // lblPier
+            // 
+            this.lblPier.AutoSize = true;
+            this.lblPier.Location = new System.Drawing.Point(94, 15);
+            this.lblPier.Name = "lblPier";
+            this.lblPier.Size = new System.Drawing.Size(46, 15);
+            this.lblPier.TabIndex = 9;
+            this.lblPier.Text = "Nome1";
             // 
             // lblListJfk
             // 
@@ -99,30 +139,33 @@
             // label5
             // 
             this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label5.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.label5.Location = new System.Drawing.Point(121, 38);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 15);
+            this.label5.Size = new System.Drawing.Size(45, 15);
             this.label5.TabIndex = 5;
             this.label5.Text = "FOLGA";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label4.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.label4.Location = new System.Drawing.Point(7, 38);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(26, 15);
+            this.label4.Size = new System.Drawing.Size(27, 15);
             this.label4.TabIndex = 4;
             this.label4.Text = "ATL";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label3.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.label3.Location = new System.Drawing.Point(64, 38);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(24, 15);
+            this.label3.Size = new System.Drawing.Size(26, 15);
             this.label3.TabIndex = 3;
             this.label3.Text = "JFK";
             // 
@@ -163,7 +206,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "ucDay";
             this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(180, 110);
+            this.Size = new System.Drawing.Size(180, 159);
             this.Load += new System.EventHandler(this.ucDay_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -184,5 +227,8 @@
         private Label lblListAtl;
         private Label label5;
         private Label lblPier;
+        private Label lblFolgaLideres;
+        private Label lblLideres;
+        private Label label6;
     }
 }

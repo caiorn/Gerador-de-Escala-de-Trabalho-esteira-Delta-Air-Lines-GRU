@@ -60,12 +60,12 @@ namespace escalaDelta {
 
         private void loadListBoxes() {
             string paramDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
-            string query = $"SELECT * FROM ColaboradorTrabalho WHERE data = '{paramDate}'";
+            string query = $"SELECT * FROM ColaboradorTrabalho WHERE data = '{paramDate}' AND local_trabalho != ''";
             using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                 connection.Open();
                 using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                     using (SQLiteDataReader reader = command.ExecuteReader()) {
-                        while (reader.Read()) { 
+                        while (reader.Read()) {
                             int idColaborador = reader.GetInt32(1);
                             var worker = Form1.colaboradores.FirstOrDefault(c => c.Id == idColaborador);
                             if (worker != null) {
@@ -82,7 +82,7 @@ namespace escalaDelta {
                                 } else if (localTrabalho == "OUTROS") {
                                     listBox1NtrampoOutros.Items.Add(worker);
                                 }
-                            }    
+                            }
                         }
                     }
                 }
@@ -131,7 +131,7 @@ namespace escalaDelta {
             using (var conexao = new SQLiteConnection(Form1.connectionString)) {
                 conexao.Open();
                 string paramDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
-                string query1 = $"DELETE FROM ColaboradorTrabalho WHERE data = '{paramDate}'";
+                string query1 = $"DELETE FROM ColaboradorTrabalho WHERE data = '{paramDate} AND id_cargo = 1'";
                 string query2 = "INSERT INTO ColaboradorTrabalho(id_colaborador, local_trabalho, data) " +
                                 "VALUES (@idColaborador, @localTrabalho, @data)";
                 using (var cmd = new SQLiteCommand(query1, conexao)) {
@@ -148,6 +148,7 @@ namespace escalaDelta {
                         cmd.Parameters.AddWithValue("@localTrabalho", "ATL");
                         cmd.Parameters.AddWithValue("@data", paramDate);
                         cmd.ExecuteNonQuery();
+
                     }
 
                     foreach (Colaborador colaboradorTrabalhou in listBox3JFK.Items) {
@@ -156,6 +157,8 @@ namespace escalaDelta {
                         cmd.Parameters.AddWithValue("@localTrabalho", "JFK");
                         cmd.Parameters.AddWithValue("@data", paramDate);
                         cmd.ExecuteNonQuery();
+
+
                     }
                     foreach (Colaborador colaborador in listBox4NtrampouFolga.Items) {
                         cmd.Parameters.Clear();
@@ -163,6 +166,7 @@ namespace escalaDelta {
                         cmd.Parameters.AddWithValue("@localTrabalho", "FOLGA");
                         cmd.Parameters.AddWithValue("@data", paramDate);
                         cmd.ExecuteNonQuery();
+
                     }
                     foreach (Colaborador colaborador in listBox1NtrampoOutros.Items) {
                         cmd.Parameters.Clear();

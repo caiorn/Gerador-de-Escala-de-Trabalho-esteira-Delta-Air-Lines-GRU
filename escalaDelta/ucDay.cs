@@ -24,7 +24,7 @@ namespace escalaDelta {
             checkBox1.Checked = !checkBox1.Checked;
         }
 
-        public ucDay(string day, string pier = "", string atl = "", string jfk = "", string folga = "") {
+        public ucDay(string day, string pier = "", string atl = "", string jfk = "", string folga_auxiliares = "", string lideres = "", string folga_lideres = "") {
             InitializeComponent();
             checkBox1.Hide();
             //LoadCustomFont();
@@ -38,7 +38,10 @@ namespace escalaDelta {
             lblPier.Text = pier;
             lblListAtl.Text = atl;
             lblListJfk.Text = jfk;
-            lblListFolga.Text = folga;
+            lblListFolga.Text = folga_auxiliares;
+            lblLideres.Text = lideres;
+            lblFolgaLideres.Text = folga_lideres;
+
             //rever isto pode ser um futuro bug
             date = _day + "/" + FormCalendar._month + "/" + FormCalendar._year;
         }
@@ -65,6 +68,10 @@ namespace escalaDelta {
             lblListJfk.Font = customFont3;
             lblListFolga.Font = customFont3;
             lblPier.Font = customFont3;
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e) {
+
         }
 
         private void PaintSundays() {
