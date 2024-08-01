@@ -37,12 +37,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.listBox1NtrampoOutros = new System.Windows.Forms.ListBox();
+            this.listBox1LideresON = new System.Windows.Forms.ListBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(43, 162);
+            this.label6.Location = new System.Drawing.Point(43, 147);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(26, 15);
             this.label6.TabIndex = 24;
@@ -51,7 +53,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(43, 247);
+            this.label3.Location = new System.Drawing.Point(43, 229);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(24, 15);
             this.label3.TabIndex = 23;
@@ -98,14 +100,14 @@
             this.listBox1Pier.ItemHeight = 15;
             this.listBox1Pier.Location = new System.Drawing.Point(43, 95);
             this.listBox1Pier.Name = "listBox1Pier";
-            this.listBox1Pier.Size = new System.Drawing.Size(145, 64);
+            this.listBox1Pier.Size = new System.Drawing.Size(145, 49);
             this.listBox1Pier.TabIndex = 27;
             // 
             // listBox2ATL
             // 
             this.listBox2ATL.FormattingEnabled = true;
             this.listBox2ATL.ItemHeight = 15;
-            this.listBox2ATL.Location = new System.Drawing.Point(43, 180);
+            this.listBox2ATL.Location = new System.Drawing.Point(43, 165);
             this.listBox2ATL.Name = "listBox2ATL";
             this.listBox2ATL.Size = new System.Drawing.Size(145, 64);
             this.listBox2ATL.TabIndex = 28;
@@ -114,7 +116,7 @@
             // 
             this.listBox3JFK.FormattingEnabled = true;
             this.listBox3JFK.ItemHeight = 15;
-            this.listBox3JFK.Location = new System.Drawing.Point(43, 265);
+            this.listBox3JFK.Location = new System.Drawing.Point(43, 245);
             this.listBox3JFK.Name = "listBox3JFK";
             this.listBox3JFK.Size = new System.Drawing.Size(145, 64);
             this.listBox3JFK.TabIndex = 29;
@@ -123,7 +125,7 @@
             // 
             this.listBox4NtrampouFolga.FormattingEnabled = true;
             this.listBox4NtrampouFolga.ItemHeight = 15;
-            this.listBox4NtrampouFolga.Location = new System.Drawing.Point(198, 95);
+            this.listBox4NtrampouFolga.Location = new System.Drawing.Point(319, 95);
             this.listBox4NtrampouFolga.Name = "listBox4NtrampouFolga";
             this.listBox4NtrampouFolga.Size = new System.Drawing.Size(145, 109);
             this.listBox4NtrampouFolga.TabIndex = 30;
@@ -131,7 +133,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(198, 77);
+            this.label1.Location = new System.Drawing.Point(319, 77);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 15);
             this.label1.TabIndex = 31;
@@ -140,7 +142,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(198, 207);
+            this.label4.Location = new System.Drawing.Point(317, 212);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(147, 15);
             this.label4.TabIndex = 32;
@@ -150,16 +152,36 @@
             // 
             this.listBox1NtrampoOutros.FormattingEnabled = true;
             this.listBox1NtrampoOutros.ItemHeight = 15;
-            this.listBox1NtrampoOutros.Location = new System.Drawing.Point(198, 225);
+            this.listBox1NtrampoOutros.Location = new System.Drawing.Point(319, 230);
             this.listBox1NtrampoOutros.Name = "listBox1NtrampoOutros";
-            this.listBox1NtrampoOutros.Size = new System.Drawing.Size(141, 109);
+            this.listBox1NtrampoOutros.Size = new System.Drawing.Size(141, 79);
             this.listBox1NtrampoOutros.TabIndex = 33;
+            // 
+            // listBox1LideresON
+            // 
+            this.listBox1LideresON.FormattingEnabled = true;
+            this.listBox1LideresON.ItemHeight = 15;
+            this.listBox1LideresON.Location = new System.Drawing.Point(194, 95);
+            this.listBox1LideresON.Name = "listBox1LideresON";
+            this.listBox1LideresON.Size = new System.Drawing.Size(119, 214);
+            this.listBox1LideresON.TabIndex = 34;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(194, 77);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(44, 15);
+            this.label7.TabIndex = 35;
+            this.label7.Text = "Lideres";
             // 
             // FormEditarEscalas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(355, 372);
+            this.ClientSize = new System.Drawing.Size(478, 372);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.listBox1LideresON);
             this.Controls.Add(this.listBox1NtrampoOutros);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
@@ -196,5 +218,7 @@
         private Label label1;
         private Label label4;
         private ListBox listBox1NtrampoOutros;
+        private ListBox listBox1LideresON;
+        private Label label7;
     }
 }

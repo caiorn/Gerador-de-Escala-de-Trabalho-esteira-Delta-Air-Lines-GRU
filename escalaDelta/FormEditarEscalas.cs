@@ -25,12 +25,14 @@ namespace escalaDelta {
             listBox1Pier.AllowDrop = true;
             listBox2ATL.AllowDrop = true;
             listBox3JFK.AllowDrop = true;
+            listBox1LideresON.AllowDrop = true;
             listBox4NtrampouFolga.AllowDrop = true;
             listBox1NtrampoOutros.AllowDrop = true;
 
             listBox1Pier.DisplayMember = "Nome";
             listBox2ATL.DisplayMember = "Nome";
             listBox3JFK.DisplayMember = "Nome";
+            listBox1LideresON.DisplayMember = "Nome";
             listBox4NtrampouFolga.DisplayMember = "Nome";
             listBox1NtrampoOutros.DisplayMember = "Nome";
 
@@ -48,6 +50,10 @@ namespace escalaDelta {
             listBox3JFK.DragDrop += ListBox_DragDrop;
             listBox3JFK.MouseDown += listBox_MouseDown;
 
+            listBox1LideresON.DragEnter += ListBox_DragEnter;
+            listBox1LideresON.DragDrop += ListBox_DragDrop;
+            listBox1LideresON.MouseDown += listBox_MouseDown;
+
             listBox4NtrampouFolga.DragEnter += ListBox_DragEnter;
             listBox4NtrampouFolga.DragDrop += ListBox_DragDrop;
             listBox4NtrampouFolga.MouseDown += listBox_MouseDown;
@@ -60,7 +66,7 @@ namespace escalaDelta {
 
         private void loadListBoxes() {
             string paramDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
-            string query = $"SELECT * FROM ColaboradorTrabalho WHERE data = '{paramDate}' AND local_trabalho != ''";
+            string query = $"SELECT * FROM ColaboradorTrabalho WHERE data = '{paramDate}'";
             using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                 connection.Open();
                 using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
@@ -77,10 +83,12 @@ namespace escalaDelta {
                                     listBox2ATL.Items.Add(worker);
                                 } else if (localTrabalho == "JFK") {
                                     listBox3JFK.Items.Add(worker);
-                                } else if (localTrabalho == "FOLGA") {
+                                } else if (localTrabalho == "FOLGA" || localTrabalho == "FOLGAMANUAL") {
                                     listBox4NtrampouFolga.Items.Add(worker);
                                 } else if (localTrabalho == "OUTROS") {
                                     listBox1NtrampoOutros.Items.Add(worker);
+                                } else if (localTrabalho == "") {
+                                    listBox1LideresON.Items.Add(worker);
                                 }
                             }
                         }
@@ -99,9 +107,18 @@ namespace escalaDelta {
             ListBox listBoxDestino = sender as ListBox;
             Colaborador item = e.Data.GetData(typeof(Colaborador)) as Colaborador;
 
+            if (listBoxDestino == listBox4NtrampouFolga) {
+                if (!item.Folga(DateOnly.FromDateTime(dateTimePicker1.Value))) {
+                    item.FolgaManual = true;
+                }
+            } else if (listBoxDestino == listBox1NtrampoOutros) {
+                item.NaoTrabalhaPorOutrosMotivos = true;
+            }
+
             // Move o item da ListBox de origem para a ListBox de destino
             listBoxOrigem.Items.Remove(item);
             listBoxDestino.Items.Add(item);
+
         }
 
         // Evento MouseDown para iniciar o arrastar para todos os ListBoxes
@@ -131,7 +148,7 @@ namespace escalaDelta {
             using (var conexao = new SQLiteConnection(Form1.connectionString)) {
                 conexao.Open();
                 string paramDate = dateTimePicker1.Value.ToString("yyyy-MM-dd");
-                string query1 = $"DELETE FROM ColaboradorTrabalho WHERE data = '{paramDate} AND id_cargo = 1'";
+                string query1 = $"DELETE FROM ColaboradorTrabalho WHERE data = '{paramDate}'";
                 string query2 = "INSERT INTO ColaboradorTrabalho(id_colaborador, local_trabalho, data) " +
                                 "VALUES (@idColaborador, @localTrabalho, @data)";
                 using (var cmd = new SQLiteCommand(query1, conexao)) {
@@ -157,13 +174,20 @@ namespace escalaDelta {
                         cmd.Parameters.AddWithValue("@localTrabalho", "JFK");
                         cmd.Parameters.AddWithValue("@data", paramDate);
                         cmd.ExecuteNonQuery();
-
-
                     }
+
+                    foreach (Colaborador colaboradorTrabalhou in listBox1LideresON.Items) {
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@idColaborador", colaboradorTrabalhou.Id);
+                        cmd.Parameters.AddWithValue("@localTrabalho", "");
+                        cmd.Parameters.AddWithValue("@data", paramDate);
+                        cmd.ExecuteNonQuery();
+                    }
+
                     foreach (Colaborador colaborador in listBox4NtrampouFolga.Items) {
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
-                        cmd.Parameters.AddWithValue("@localTrabalho", "FOLGA");
+                        cmd.Parameters.AddWithValue("@localTrabalho", colaborador.FolgaManual? "FOLGAMANUAL" : "FOLGA");
                         cmd.Parameters.AddWithValue("@data", paramDate);
                         cmd.ExecuteNonQuery();
 

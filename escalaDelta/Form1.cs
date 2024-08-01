@@ -27,14 +27,14 @@ namespace escalaDelta {
         public static string caminhoBancoDados = "database.db";
         public static string connectionString = $"Data Source={caminhoBancoDados}";
         public static List<Colaborador> colaboradores { get; set; }
-        public List<Colaborador> fila_ATL_Present { get; set; }
-        public List<Colaborador> fila_PIER_Present { get; set; }
-        public List<Colaborador> fila_ATL_Future { get; set; }
-        public List<Colaborador> fila_PIER_Future { get; set; }
+        private List<Colaborador> fila_ATL_Present { get; set; }
+        private List<Colaborador> fila_PIER_Present { get; set; }
+        private List<Colaborador> fila_ATL_Future { get; set; }
+        private List<Colaborador> fila_PIER_Future { get; set; }
 
-        public Colaborador PIER_work { get; set; }
-        public List<Colaborador> ATL_work { get; set; }
-        public List<Colaborador> JFK_work { get; set; }
+        private Colaborador PIER_work { get; set; }
+        private List<Colaborador> auxiliares_ATL { get; set; }
+        private List<Colaborador> auxiliares_JFK { get; set; }
 
         public DateOnly dataProximaEscala { get; set; }
 
@@ -78,7 +78,6 @@ namespace escalaDelta {
             loadUltimasEscalasDataGridView();
             buscarDataUltimaEscalaGerada();
             //passar datas por parametro. +mais controle;
-            definirColaboraderesAusenteFolga();
             definirColaboradoresAusenteOutros();
             popularListsBoxes();
 
@@ -95,9 +94,10 @@ namespace escalaDelta {
             listBoxFolga.Items.Clear();
             listBoxOutros.Items.Clear();
             foreach (var colaborador in colaboradores) {
+                colaborador.FolgaManual = false;
                 if (colaborador.NaoTrabalhaPorOutrosMotivos) {
                     listBoxOutros.Items.Add(colaborador);
-                } else if (colaborador.Folga) {
+                } else if (!colaborador.Trabalha(dataProximaEscala)) {
                     listBoxFolga.Items.Add(colaborador);
                 } else {
                     listBoxTrabalha.Items.Add(colaborador);
@@ -119,19 +119,12 @@ namespace escalaDelta {
             }
         }
 
-        private void definirColaboraderesAusenteFolga() {
-            //verificar quem folga na escala a ser gerada
-            foreach (Colaborador colaborador in colaboradores) {
-                colaborador.Folga = EstaDeFolga6x16x2(dataProximaEscala, colaborador.DataBaseFolga1Dia);
-            };
-        }
-
         private void definirEscalaHojeEAtualizarProximaEscalaFutura() {
 
             //deve ter ao menos 1 colaborador de 6h no ATL e JFK
             PIER_work = null;
-            ATL_work = new List<Colaborador>();
-            JFK_work = new List<Colaborador>();
+            auxiliares_ATL = new List<Colaborador>();
+            auxiliares_JFK = new List<Colaborador>();
             List<Colaborador> auxiliares = colaboradores.Where(c => c.Cargo?.Id == 1).ToList();
             List<Colaborador> lideres = colaboradores.Where(c => c.Cargo?.Id == 2).ToList();
 
@@ -140,7 +133,7 @@ namespace escalaDelta {
             fila_ATL_Future = fila_ATL_Present.ToList();
 
                         
-            var todosDe6hQueTrabalhara = auxiliares.Where(c => c.Trabalha && c.HorasTrabalho == 6);
+            var todosDe6hQueTrabalhara = auxiliares.Where(c => c.Trabalha(dataProximaEscala) && c.HorasTrabalho == 6);
             Colaborador? HojeATLde6h = null;
             Colaborador? HojeJFKde6h = null;
             TimeOnly h17m00 = new TimeOnly(17, 0);
@@ -156,61 +149,61 @@ namespace escalaDelta {
 
             if (todosDe6hQueTrabalhara.Count() > 2) {
                 //se ao menos 3 de 6h trabalharao, definir primeiro o pier Justamente.
-                PIER_work = fila_PIER_Present.First(c => c.Trabalha && !JFK_work.Contains(c)); ;                
-                HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != PIER_work.Nome);
-                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome && c.Nome != PIER_work.Nome);                    
+                PIER_work = fila_PIER_Present.First(c => c.Trabalha(dataProximaEscala) && !auxiliares_JFK.Contains(c)); ;                
+                HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha(dataProximaEscala) && c.HorasTrabalho == 6 && c.Nome != PIER_work.Nome);
+                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha(dataProximaEscala) && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome && c.Nome != PIER_work.Nome);                    
             } else {
-                HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha && c.HorasTrabalho == 6);
-                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha && c.Entrada <= h17m00 && c.Nome != HojeATLde6h?.Nome);
-                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha && c.Nome != HojeATLde6h?.Nome && c.Nome != HojeJFKde6h?.Nome);
+                HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha(dataProximaEscala) && c.HorasTrabalho == 6);
+                HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha(dataProximaEscala) && c.Entrada <= h17m00 && c.Nome != HojeATLde6h?.Nome);
+                PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha(dataProximaEscala) && c.Nome != HojeATLde6h?.Nome && c.Nome != HojeJFKde6h?.Nome);
             }
             if (HojeATLde6h != null) {
-                ATL_work.Add(HojeATLde6h);
+                auxiliares_ATL.Add(HojeATLde6h);
             }
             if (HojeJFKde6h != null) {
-                JFK_work.Add(HojeJFKde6h);
+                auxiliares_JFK.Add(HojeJFKde6h);
             }
 
             //se tiver 3 de cada lado + pier e se tiver alguem que trabalha depois da 18:30h, só fara o pier ou 104 
-            if (auxiliares.Count(c => c.Trabalha) >= 7) {
+            if (auxiliares.Count(c => c.Trabalha(dataProximaEscala)) >= 7) {
                 var colaboradorQueEntraApos19hDisponivel = auxiliares.Where(c =>
                     c.Entrada?.Hour >= 18 && c.Entrada?.Minute >= 30 &&
-                    c.Trabalha &&
+                    c.Trabalha(dataProximaEscala) &&
                     c.Nome != PIER_work.Nome &&
-                    !ATL_work.Contains(c) &&
-                    !JFK_work.Contains(c));
+                    !auxiliares_ATL.Contains(c) &&
+                    !auxiliares_JFK.Contains(c));
 
                 if (colaboradorQueEntraApos19hDisponivel.Count() == 1) {
-                    ATL_work.Add(colaboradorQueEntraApos19hDisponivel.First());
+                    auxiliares_ATL.Add(colaboradorQueEntraApos19hDisponivel.First());
                 }
             }
             //calculo para dividir a equipe caso ultrapasse de 3 colaborador pra cada
-            int qtnTrabalhara = auxiliares.Count(c => c.Trabalha);
+            int qtnTrabalhara = auxiliares.Count(c => c.Trabalha(dataProximaEscala));
             int qtdSobra = qtnTrabalhara % 2;
            
             //adiciona o restante da fila para trabalhar no voo 104 quem nao está no ATL, JFK e Pier
             var doisPrimeirosFilaATL = fila_ATL_Future.Where(c =>
-                c.Trabalha &&
+                c.Trabalha(dataProximaEscala) &&
                 c.Nome != PIER_work?.Nome &&
-                !ATL_work.Contains(c) &&
-                !JFK_work.Contains(c) 
-                ).Take(((qtnTrabalhara - qtdSobra) / 2) - ATL_work.Count); //divisao de turma, caso impar ATL ficará 1 a mais.
-            ATL_work.AddRange(doisPrimeirosFilaATL);
+                !auxiliares_ATL.Contains(c) &&
+                !auxiliares_JFK.Contains(c) 
+                ).Take(((qtnTrabalhara - qtdSobra) / 2) - auxiliares_ATL.Count); //divisao de turma, caso impar ATL ficará 1 a mais.
+            auxiliares_ATL.AddRange(doisPrimeirosFilaATL);
 
             // Movendo quem ta trabalhando no ATL para o final da fila ATL pela sequencia
             var ATL_work_sequence = fila_ATL_Future.ToList();
-            ATL_work_sequence.RemoveAll(colaborador => !ATL_work.Contains(colaborador));
-            fila_ATL_Future.RemoveAll(colaborador => ATL_work.Contains(colaborador));
+            ATL_work_sequence.RemoveAll(colaborador => !auxiliares_ATL.Contains(colaborador));
+            fila_ATL_Future.RemoveAll(colaborador => auxiliares_ATL.Contains(colaborador));
             fila_ATL_Future.AddRange(ATL_work_sequence);
 
             //adiciona o restante pela sequencia para trabalhar no voo 226
             var sobra_JFK = fila_ATL_Future.Where(c =>
-                c.Trabalha &&
+                c.Trabalha(dataProximaEscala) &&
                 c.Nome != PIER_work?.Nome &&
-                !JFK_work.Contains(c) &&
-                !ATL_work.Contains(c)
+                !auxiliares_JFK.Contains(c) &&
+                !auxiliares_ATL.Contains(c)
                 );
-            JFK_work.AddRange(sobra_JFK);
+            auxiliares_JFK.AddRange(sobra_JFK);
 
             //o pier vai para o final da fila PIER
             fila_PIER_Future.Remove(PIER_work);
@@ -221,9 +214,9 @@ $@"Escala de {dataProximaEscala.ToString("ddd", new CultureInfo("pt-BR"))} {data
 Pier: 
   {PIER_work.Nome}
 226: 
-  {string.Join("\r\n  ", JFK_work.Select(c => c.Nome))}
+  {string.Join("\r\n  ", auxiliares_JFK.Select(c => c.Nome))}
 104: 
-  {string.Join("\r\n  ", ATL_work.Select(c => c.Nome))}
+  {string.Join("\r\n  ", auxiliares_ATL.Select(c => c.Nome))}
 ";
             rtxtProximaEscala.Text = texto;
             atualizarRichTextBoxFuturasFilas();
@@ -253,7 +246,7 @@ Pier:
             listBoxDestino.Items.Add(colaboradorItem);
 
 
-            colaboradorItem.Folga = listBoxDestino == listBoxFolga;
+            colaboradorItem.FolgaManual = listBoxDestino == listBoxFolga;
             colaboradorItem.NaoTrabalhaPorOutrosMotivos = listBoxDestino == listBoxOutros;
             PintarTrabalhadoresENaoTrabalhadores();
             definirEscalaHojeEAtualizarProximaEscalaFutura();
@@ -282,7 +275,7 @@ Pier:
 
         private void PintarTrabalhadoresENaoTrabalhadores() {
             foreach (Colaborador colaborador in colaboradores) {
-                if (colaborador.Trabalha) {
+                if (colaborador.Trabalha(dataProximaEscala)) {
                     HighlightSearchText(colaborador.Nome, richTextBoxFILAATL, richTextBoxFILAPIER.ForeColor);
                     HighlightSearchText(colaborador.Nome, richTextBoxFILAPIER, richTextBoxFILAPIER.ForeColor);
                 } else {
@@ -336,7 +329,6 @@ Pier:
             List<Cargo> cargos = new List<Cargo>();
             colaboradores = new List<Colaborador>();
             try {
-                //carrega lideres
                 using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
                     connection.Open();
                     string query = "SELECT * FROM Cargo";
@@ -368,14 +360,17 @@ Pier:
                                 colaborador.Saida = new TimeOnly(saida.Hour, saida.Minute);                                
                                 colaborador.DataBaseFolga1Dia = dataFolgaBase;
 
-                                colaborador.Cargo = cargos.FirstOrDefault(c => c.Id == Convert.ToInt32(reader["id_cargo"]));
-                                
+                                colaborador.Cargo = cargos.FirstOrDefault(c => c.Id == Convert.ToInt32(reader["id_cargo"]));                                                      
+                            
+
                                 //colaborador.UltimoDiaFolga = new DateOnly(ultimoDiaFolga.Year, ultimoDiaFolga.Month, ultimoDiaFolga.Day);
 
                                 colaboradores.Add(colaborador);
                             }
                         }
                     }
+
+
                     connection.Close();
                 }
             } catch (Exception ex) {
@@ -455,6 +450,7 @@ Pier:
                                     ) AS ultimos_registros
                                     INNER JOIN Colaborador ON ultimos_registros.id_colaborador = colaborador.id
                                         AND colaborador.deletado IS NULL
+                                        AND colaborador.id_cargo = 1
                                     ORDER BY ultimos_registros.data ASC;
                                     ";
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
@@ -582,26 +578,39 @@ Pier:
                     cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                     cmd.ExecuteNonQuery();
 
-                    foreach (var colaboradorTrabalhou in ATL_work) {
+                    foreach (var auxiliarTrabalhouATL in auxiliares_ATL) {
                         cmd.Parameters.Clear();
-                        cmd.Parameters.AddWithValue("@idColaborador", colaboradorTrabalhou.Id);
+                        cmd.Parameters.AddWithValue("@idColaborador", auxiliarTrabalhouATL.Id);
                         cmd.Parameters.AddWithValue("@localTrabalho", "ATL");
                         cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                         cmd.ExecuteNonQuery();
                     }
 
-                    foreach (var colaboradorTrabalhou in JFK_work) {
+                    foreach (var auxiliarTrabalhouJFK in auxiliares_JFK) {
                         cmd.Parameters.Clear();
-                        cmd.Parameters.AddWithValue("@idColaborador", colaboradorTrabalhou.Id);
+                        cmd.Parameters.AddWithValue("@idColaborador", auxiliarTrabalhouJFK.Id);
                         cmd.Parameters.AddWithValue("@localTrabalho", "JFK");
                         cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                         cmd.ExecuteNonQuery();
                     }
 
+                    //lideres
+                    foreach (Colaborador colaborador in colaboradores) {
+                        if (colaborador.Trabalha(dataProximaEscala)) {
+                            if (colaborador.Cargo?.Id == 2) {
+                                cmd.Parameters.Clear();
+                                cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
+                                cmd.Parameters.AddWithValue("@localTrabalho", "");
+                                cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
                     foreach (Colaborador colaborador in listBoxFolga.Items) {
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
-                        cmd.Parameters.AddWithValue("@localTrabalho", "FOLGA");
+                        cmd.Parameters.AddWithValue("@localTrabalho", colaborador.FolgaManual ? "FOLGAMANUAL": "FOLGA");
                         cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                         cmd.ExecuteNonQuery();
                     }
@@ -612,20 +621,7 @@ Pier:
                         cmd.Parameters.AddWithValue("@localTrabalho", "OUTROS");
                         cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                         cmd.ExecuteNonQuery();
-                    }
-
-                    //lideres
-                    foreach (Colaborador colaborador in colaboradores) {
-                        if (!colaborador.Folga) {
-                            if (colaborador.Cargo?.Id == 2) {
-                                cmd.Parameters.Clear();
-                                cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
-                                cmd.Parameters.AddWithValue("@localTrabalho", "");
-                                cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
-                    }
+                    }                   
                 }
             }
 
@@ -689,7 +685,7 @@ Pier:
             int numColunas = datasList.Count > 100 ? 5 : 
                              (datasList.Count > 50 ? 4 : 
                              (datasList.Count > 30 ? 3 : 2) ); 
-            string message = FormatItems(datasList, numColunas);
+            string message = StringFormatting.FormatItems(datasList, numColunas);
 
             //var datasStr = string.Join(Environment.NewLine, datasSelecionadas);
 
@@ -727,23 +723,7 @@ Pier:
             //dateTimePicker1.Value = dateTimePicker1.Value.AddDays(1);
         }
 
-        /// <summary>
-        /// Verifica se em determinada data seria folga na escala 6x1 6x2 com base em uma data Inicial.
-        /// </summary>
-        /// <param name="dataAVerificar"></param>
-        /// <param name="ultimaFolgaUnica">Data de uma folga sozinha, sem dobradinha</param>
-        /// <returns></returns>
-        static bool EstaDeFolga6x16x2(DateOnly dataAVerificar, DateOnly ultimaFolgaUnica) {
-            var diferencaDias = Math.Abs(dataAVerificar.DayNumber - ultimaFolgaUnica.DayNumber);
-            // A cada 15 dias ele folgara 1x denovo
-            int diasFuturoSobra = diferencaDias % 15;
-            //  A folga dobrada dele é no 7º e 8º Dia.
-            if (diasFuturoSobra == 0 || diasFuturoSobra == 7 || diasFuturoSobra == 8) {
-                //está de folga
-                return true;
-            } else { return false; }
 
-        }
 
         private void calendarioToolStripMenuItem_Click(object sender, EventArgs e) {
             
@@ -764,34 +744,6 @@ Pier:
                     fc.Show();
                 }
             }
-        }
-
-        private static string FormatItems<T>(IEnumerable<T> items, int numColunas) {
-            List<T> itemList = new List<T>(items);
-            int partSize = (itemList.Count + numColunas - 1) / numColunas; // Arredondar para cima
-
-            // Criação de listas de sublistas
-            List<List<T>> colunas = new List<List<T>>();
-            for (int i = 0; i < numColunas; i++) {
-                int startIndex = i * partSize;
-                int count = Math.Min(partSize, itemList.Count - startIndex);
-                colunas.Add(itemList.GetRange(startIndex, count));
-            }
-
-            string formattedString = "";
-            for (int i = 0; i < partSize; i++) {
-                List<string> row = new List<string>();
-                for (int j = 0; j < numColunas; j++) {
-                    if (i < colunas[j].Count) {
-                        row.Add(colunas[j][i]?.ToString() ?? "");
-                    } else {
-                        row.Add("");
-                    }
-                }
-                formattedString += string.Join("\t", row) + "\n";
-            }
-
-            return formattedString;
-        }
+        }        
     }
 }
