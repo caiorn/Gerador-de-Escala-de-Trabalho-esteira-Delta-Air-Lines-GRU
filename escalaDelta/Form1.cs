@@ -240,14 +240,19 @@ Pier:
         private void ListBox_DragDrop(object sender, DragEventArgs e) {
             ListBox listBoxDestino = sender as ListBox;
             Colaborador colaboradorItem = e.Data.GetData(typeof(Colaborador)) as Colaborador;                      
+                        
+            if (listBoxDestino == listBoxFolga) {
+                if (!colaboradorItem.Folga(dataProximaEscala)) {
+                    colaboradorItem.FolgaManual = true;
+                }
+            } else if (listBoxDestino == listBoxOutros) {
+                colaboradorItem.NaoTrabalhaPorOutrosMotivos = true;
+            }
 
             // Move o item da ListBox de origem para a ListBox de destino
             listBoxOrigem.Items.Remove(colaboradorItem);
             listBoxDestino.Items.Add(colaboradorItem);
 
-
-            colaboradorItem.FolgaManual = listBoxDestino == listBoxFolga;
-            colaboradorItem.NaoTrabalhaPorOutrosMotivos = listBoxDestino == listBoxOutros;
             PintarTrabalhadoresENaoTrabalhadores();
             definirEscalaHojeEAtualizarProximaEscalaFutura();
 
@@ -402,9 +407,9 @@ Pier:
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'PIER' THEN c.nome ELSE NULL END) AS PIER,
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'ATL' THEN ' ' || c.nome  ELSE NULL END) AS ATL,
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'JFK' THEN ' ' || c.nome ELSE NULL END) AS JFK,
-                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 1) THEN c.nome  ELSE NULL END) AS FOLGA_AUXILIARES,
+                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 1) THEN c.nome  ELSE NULL END) AS FOLGA_AUXILIARES,
                                 GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 2 ) THEN ' ' || c.nome ELSE NULL END) AS LIDERES,
-                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES
+                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES
                             FROM 
                                 ColaboradorTrabalho ct
                             LEFT JOIN 
