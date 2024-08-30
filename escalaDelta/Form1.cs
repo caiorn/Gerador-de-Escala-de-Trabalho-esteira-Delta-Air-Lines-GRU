@@ -239,14 +239,19 @@ Pier:
         // Evento DragDrop para todos os ListBoxes
         private void ListBox_DragDrop(object sender, DragEventArgs e) {
             ListBox listBoxDestino = sender as ListBox;
-            Colaborador colaboradorItem = e.Data.GetData(typeof(Colaborador)) as Colaborador;                      
-                        
+            Colaborador colaboradorItem = e.Data.GetData(typeof(Colaborador)) as Colaborador;
+
             if (listBoxDestino == listBoxFolga) {
+                colaboradorItem.NaoTrabalhaPorOutrosMotivos = false;
                 if (!colaboradorItem.Folga(dataProximaEscala)) {
                     colaboradorItem.FolgaManual = true;
                 }
             } else if (listBoxDestino == listBoxOutros) {
+                colaboradorItem.FolgaManual = false;
                 colaboradorItem.NaoTrabalhaPorOutrosMotivos = true;
+            } else if (listBoxDestino == listBoxTrabalha) {
+                colaboradorItem.NaoTrabalhaPorOutrosMotivos = false;
+                colaboradorItem.FolgaManual = false;
             }
 
             // Move o item da ListBox de origem para a ListBox de destino

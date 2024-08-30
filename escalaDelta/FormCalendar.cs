@@ -21,6 +21,8 @@ namespace escalaDelta {
 
         public FormCalendar(int mes, int ano) {
             InitializeComponent();
+            
+            flowLayoutPanel1.AutoScroll = false;
 
             flowLayoutPanel1.WrapContents = true; // Permite que os controles quebrem linha
 
@@ -56,7 +58,7 @@ namespace escalaDelta {
         }
 
         private void lblMonth_Click(object sender, EventArgs e) {
-
+            MessageBox.Show(this.Height.ToString());
         }
 
         private void pictureBox1_Click(object sender, EventArgs e) {
