@@ -1,4 +1,5 @@
 ﻿using escalaDelta.Utils;
+using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
 using System.Transactions;
@@ -58,17 +59,20 @@ namespace escalaDelta {
             dgvColaboradores.Columns.Add("Nome", "Nome");
             dgvColaboradores.Columns.Add("Entrada", "Entrada");
             dgvColaboradores.Columns.Add("Saída", "Saída");
+            dgvColaboradores.Columns.Add("Função", "Função");
             dgvColaboradores.Columns.Add("Folga", "Folga");
             dgvColaboradores.Columns["Entrada"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvColaboradores.Columns["Saída"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvColaboradores.DefinirTamanhoPercentualColunasModeFILL(
                            ("Cód", 5),
-                           ("Nome", 20),
+                           ("Nome", 15),
                            ("Entrada", 10),
                            ("Saída", 10),
+                           ("Função", 10),
                            ("Folga", 10)
                            );
             CarregarConsultaDataGridView(dgvColaboradores);
+            CarregarCargoComboBox();
             EnableDisableEdits(false);
         }
 
@@ -79,8 +83,17 @@ namespace escalaDelta {
                     // Abrir a conexão com o banco de dados
                     connection.Open();
 
-                    // Comando SQL para selecionar todos os colaboradores
-                    string query = "SELECT id, nome, hora_entrada, hora_saida, strftime('%d/%m/%Y', data_dia_folga_unica) as data_dia_folga_unica FROM Colaborador WHERE deletado IS NULL";
+                    //// Comando SQL para selecionar todos os colaboradores
+                    string query = @"SELECT co.id, nome, hora_entrada, hora_saida, funcao, strftime('%d/%m/%Y', data_dia_folga_unica) as data_dia_folga_unica FROM Colaborador co 
+                                    LEFT JOIN Cargo ca ON ca.id = co.id_cargo
+                                    WHERE deletado IS NULL";
+
+
+                    //DataTable table = new DataTable("lide");
+                    //using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, connection))
+                    //    adapter.Fill(table);
+
+                    //dgvColaboradores.DataSource = table;
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
@@ -92,6 +105,7 @@ namespace escalaDelta {
                                 string nome = reader["nome"].ToString();
                                 string entrada = reader["hora_entrada"].ToString();
                                 string saida = reader["hora_saida"].ToString();
+                                string cargo = reader["funcao"].ToString();
                                 string folga = reader["data_dia_folga_unica"].ToString();
 
                                 // Formata os valores para exibir somente a hora
@@ -99,7 +113,7 @@ namespace escalaDelta {
                                 saida = DateTime.Parse(saida).ToString("HH:mm");
 
                                 // Adiciona uma nova linha ao DataGridView com os valores formatados
-                                dgv.Rows.Add(id, nome, entrada, saida, folga);
+                                dgv.Rows.Add(id, nome, entrada, saida, cargo, folga);
                                 dgv.ClearSelection();
                             }
                         }
@@ -113,7 +127,33 @@ namespace escalaDelta {
             }
         }
 
- 
+        private void CarregarCargoComboBox() {
+            comboBox1.Items.Clear();
+            comboBox1.DisplayMember = "Funcao";
+            comboBox1.ValueMember = "Id";
+            try {
+                using (SQLiteConnection connection = new SQLiteConnection(Form1.connectionString)) {
+                    connection.Open();
+                    string query = "SELECT Id, Funcao FROM Cargo";
+                    using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
+                        using (SQLiteDataReader reader = command.ExecuteReader()) {
+                            // Lê os dados do SQLiteDataReader e os adiciona ao DataGridView
+                            while (reader.Read()) {
+                                Cargo cargo = new Cargo();
+                                cargo.Id =     reader.GetInt32("Id");
+                                cargo.Funcao = reader.GetString("Funcao");
+                                comboBox1.Items.Add(cargo);
+                            }
+                        }
+                    }
+                    // Fechar a conexão com o banco de dados
+                    connection.Close();
+                    comboBox1.SelectedIndex = 0;
+                }
+            } catch (Exception ex) {
+                MessageBox.Show("Ocorreu um erro ao obter os dados dos colaboradores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void btnNewInsertUpdate_Click(object sender, EventArgs e) {
             try {
@@ -172,12 +212,13 @@ namespace escalaDelta {
             using (var conexao = new SQLiteConnection(Form1.connectionString)) {
                 conexao.Open();
                 using (var cmd = new SQLiteCommand(
-                    "INSERT INTO Colaborador (nome, hora_entrada, hora_saida, data_dia_folga_unica) " +
-                    "VALUES (@nome, @horaEntrada, @horaSaida, @dataUltimaFolga)", conexao)) {
+                    "INSERT INTO Colaborador (nome, hora_entrada, hora_saida, data_dia_folga_unica, id_cargo) " +
+                    "VALUES (@nome, @horaEntrada, @horaSaida, @dataUltimaFolga, @idCargo)", conexao)) {
                     cmd.Parameters.AddWithValue("@nome", textBox1.Text);
                     cmd.Parameters.AddWithValue("@horaEntrada", dateTimePickerHoraEntrada.Text);
                     cmd.Parameters.AddWithValue("@horaSaida", dateTimePickerHoraSaida.Text);
                     cmd.Parameters.AddWithValue("@dataUltimaFolga", dateTimePickerDataFolga.Value.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@idCargo", ((Cargo)comboBox1.SelectedItem).Id);
 
                     int totalInserted = cmd.ExecuteNonQuery();
                     return totalInserted == 1;                    
@@ -188,15 +229,15 @@ namespace escalaDelta {
             if (idEditing <= 0) {
                 throw new Exception("Id não atribuido no método Update");
             }
-
             using (var conexao = new SQLiteConnection(Form1.connectionString)) {
                 conexao.Open();
                 using (var cmd = new SQLiteCommand(
-                    "UPDATE Colaborador SET nome = @nome, hora_entrada = @horaEntrada, hora_saida = @horaSaida, data_dia_folga_unica = @dataUltimaFolga WHERE id = @id", conexao)) {
+                    "UPDATE Colaborador SET nome = @nome, hora_entrada = @horaEntrada, hora_saida = @horaSaida, data_dia_folga_unica = @dataUltimaFolga, id_cargo = @idCargo WHERE id = @id", conexao)) {
                     cmd.Parameters.AddWithValue("@nome", textBox1.Text);
                     cmd.Parameters.AddWithValue("@horaEntrada", dateTimePickerHoraEntrada.Text);
                     cmd.Parameters.AddWithValue("@horaSaida", dateTimePickerHoraSaida.Text);
                     cmd.Parameters.AddWithValue("@dataUltimaFolga", dateTimePickerDataFolga.Value.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@idCargo", ((Cargo)comboBox1.SelectedItem).Id);
                     cmd.Parameters.AddWithValue("@id", idEditing);
                     int totalUpdated = cmd.ExecuteNonQuery();
                     return totalUpdated == 1;
@@ -225,6 +266,7 @@ namespace escalaDelta {
             textBox1.ReadOnly = !enable;
             dateTimePickerHoraEntrada.Enabled = enable;
             dateTimePickerHoraSaida.Enabled = enable;
+            dateTimePickerDataFolga.Enabled = enable;
         }
 
         private void dgvColaboradores_SelectionChanged(object sender, EventArgs e) {
@@ -240,11 +282,17 @@ namespace escalaDelta {
                 string horaEntrada = linhaSelecionada.Cells["Entrada"].Value.ToString();
                 string horaSaida = linhaSelecionada.Cells["Saída"].Value.ToString();
                 string dataFolga = linhaSelecionada.Cells["Folga"].Value.ToString();
+                string funcao = linhaSelecionada.Cells["Função"].Value.ToString();
 
                 // Define o valor do DateTimePicker customizado para hora de entrada
                 dateTimePickerHoraEntrada.Value = DateTime.ParseExact(horaEntrada, "HH:mm", CultureInfo.InvariantCulture);
                 dateTimePickerHoraSaida.Value = DateTime.ParseExact(horaSaida, "HH:mm", CultureInfo.InvariantCulture);
                 dateTimePickerDataFolga.Value = DateTime.ParseExact(dataFolga, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                //definindo combobox selecao
+                var itemSelecionado = comboBox1.Items.OfType<Cargo>().FirstOrDefault(c => c.Funcao == funcao);
+                comboBox1.SelectedItem = itemSelecionado;
+
             } else {
                 textBox1.Clear();
             }

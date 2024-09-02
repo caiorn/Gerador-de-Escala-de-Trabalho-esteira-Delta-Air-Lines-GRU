@@ -37,6 +37,8 @@
             this.btnEditCancel = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColaboradores)).BeginInit();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -123,6 +125,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboBox1);
+            this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.dateTimePickerHoraSaida);
             this.panel1.Controls.Add(this.dateTimePickerHoraEntrada);
@@ -176,6 +180,24 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(430, 32);
             this.flowLayoutPanel1.TabIndex = 11;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(279, 13);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(39, 15);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Cargo";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(324, 10);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(97, 23);
+            this.comboBox1.TabIndex = 12;
+            // 
             // FormColaborador
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -209,5 +231,7 @@
         private Button btnEditCancel;
         private Button btnDelete;
         private FlowLayoutPanel flowLayoutPanel1;
+        private ComboBox comboBox1;
+        private Label label5;
     }
 }
