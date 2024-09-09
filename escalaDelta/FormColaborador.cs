@@ -1,4 +1,5 @@
 ﻿using escalaDelta.Utils;
+using System;
 using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
@@ -31,6 +32,9 @@ namespace escalaDelta {
                     btnEditCancel.Text = "Cancel";
                     if (value == state.NEW) {
                         textBox1.Clear();
+                        dateTimePickerHoraEntrada.Text = "17:00";
+                        dateTimePickerDataFolga.Text = "23:00";
+
                         btnNewInsertUpdate.Text = "Insert";
                     } else if (value == state.EDIT) {
                         if (idEditing == 0) {
@@ -296,6 +300,89 @@ namespace escalaDelta {
             } else {
                 textBox1.Clear();
             }
-        }        
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e) {
+            groupBox1.Visible = true;
+
+        }
+
+        private void btnCancelCargo_Click(object sender, EventArgs e) {
+            groupBox1.Visible = false;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {
+            txtEditCargo.Text = comboBox1.Text;
+            txtEditCargo.SelectAll();
+        }
+
+        private void btnNewCargo_Click(object sender, EventArgs e) {
+            string funcao = txtEditCargo.Text.Trim();
+            if (funcao == "") {
+                MessageBox.Show("Não é permitido campo vazio");
+                return;
+            }
+            using (var conexao = new SQLiteConnection(Form1.connectionString)) {
+                conexao.Open();
+                using (var cmd = new SQLiteCommand(
+                    "INSERT INTO CARGO (funcao) values (@funcao) RETURNING id", conexao)) {
+                    cmd.Parameters.AddWithValue("@funcao", funcao);
+                    int idInserted = Convert.ToInt32(cmd.ExecuteScalar());
+                    
+                    Cargo cargo = new Cargo() {
+                        Id = idInserted,
+                        Funcao = funcao
+                    };                  
+                    comboBox1.Items.Add(cargo);
+                    comboBox1.SelectedItem = cargo;
+                }
+            }
+        }
+
+        private void btnUpdateCargo_Click(object sender, EventArgs e) {
+            string funcao = txtEditCargo.Text.Trim();
+            if (funcao == "") {
+                MessageBox.Show("Não é permitido campo vazio");
+                return;
+            }
+
+            Cargo cargoSelected = (Cargo)comboBox1.SelectedItem;
+            if (cargoSelected != null) {
+                MessageBox.Show("Selecione o item que deseja alterar");
+                return;
+            }
+
+            using (var conexao = new SQLiteConnection(Form1.connectionString)) {
+                conexao.Open();
+                using (var cmd = new SQLiteCommand(
+                    "UPDATE Cargo SET funcao = @funcao WHERE id = @id", conexao)) {
+                    cmd.Parameters.AddWithValue("@id", cargoSelected.Id);
+                    cmd.Parameters.AddWithValue("@funcao", funcao);
+                    int updated = cmd.ExecuteNonQuery();
+                    if (updated == 1) {
+                        cargoSelected.Funcao = funcao;
+                    }
+
+                }
+            }
+        }
+
+        private void btnDeleteCargo_Click(object sender, EventArgs e) {
+            Cargo cargoSelected = (Cargo)comboBox1.SelectedItem;
+
+            using (var conexao = new SQLiteConnection(Form1.connectionString)) {
+                conexao.Open();
+                using (var cmd = new SQLiteCommand(
+                    "DELETE FROM Cargo WHERE id = @id", conexao)) {
+                    cmd.Parameters.AddWithValue("@id", cargoSelected.Id);
+                    int totalDeleted = cmd.ExecuteNonQuery();
+
+                    if (totalDeleted == 1) {
+                        comboBox1.Items.Remove(cargoSelected);
+                        txtEditCargo.Clear();
+                    }
+                }
+            }
+        }
     }
 }

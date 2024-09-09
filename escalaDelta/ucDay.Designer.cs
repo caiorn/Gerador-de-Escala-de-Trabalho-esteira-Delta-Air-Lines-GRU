@@ -23,7 +23,12 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ucDay));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblFeriado = new System.Windows.Forms.Label();
+            this.lblOperadores = new System.Windows.Forms.Label();
+            this.lblFolgaOperadores = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.lblFolgaLideres = new System.Windows.Forms.Label();
             this.lblLideres = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -43,6 +48,10 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.White;
+            this.panel1.Controls.Add(this.lblFeriado);
+            this.panel1.Controls.Add(this.lblOperadores);
+            this.panel1.Controls.Add(this.lblFolgaOperadores);
+            this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.lblFolgaLideres);
             this.panel1.Controls.Add(this.lblLideres);
             this.panel1.Controls.Add(this.label6);
@@ -59,10 +68,57 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(1, 1);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(178, 157);
+            this.panel1.Size = new System.Drawing.Size(188, 204);
             this.panel1.TabIndex = 0;
             this.panel1.Click += new System.EventHandler(this.panel1_Click);
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // lblFeriado
+            // 
+            this.lblFeriado.Font = new System.Drawing.Font("Carlito", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblFeriado.ForeColor = System.Drawing.Color.Red;
+            this.lblFeriado.Location = new System.Drawing.Point(46, 0);
+            this.lblFeriado.Name = "lblFeriado";
+            this.lblFeriado.Size = new System.Drawing.Size(139, 15);
+            this.lblFeriado.TabIndex = 15;
+            this.lblFeriado.Text = "Confraternização Universal";
+            this.lblFeriado.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblFeriado.Visible = false;
+            // 
+            // lblOperadores
+            // 
+            this.lblOperadores.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblOperadores.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblOperadores.Location = new System.Drawing.Point(6, 173);
+            this.lblOperadores.Name = "lblOperadores";
+            this.lblOperadores.Size = new System.Drawing.Size(109, 30);
+            this.lblOperadores.TabIndex = 14;
+            this.lblOperadores.Text = "Nome1, Nome2, Nome3, Nome4";
+            // 
+            // lblFolgaOperadores
+            // 
+            this.lblFolgaOperadores.AutoSize = true;
+            this.lblFolgaOperadores.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblFolgaOperadores.ForeColor = System.Drawing.Color.Red;
+            this.lblFolgaOperadores.Location = new System.Drawing.Point(121, 172);
+            this.lblFolgaOperadores.Name = "lblFolgaOperadores";
+            this.lblFolgaOperadores.Size = new System.Drawing.Size(43, 26);
+            this.lblFolgaOperadores.TabIndex = 13;
+            this.lblFolgaOperadores.Text = "Nome1\r\nNome2";
+            // 
+            // label7
+            // 
+            this.label7.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label7.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label7.Image = ((System.Drawing.Image)(resources.GetObject("label7.Image")));
+            this.label7.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label7.Location = new System.Drawing.Point(7, 158);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(160, 15);
+            this.label7.TabIndex = 12;
+            this.label7.Text = "OPERADORES";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblFolgaLideres
             // 
@@ -90,6 +146,8 @@
             this.label6.BackColor = System.Drawing.Color.WhiteSmoke;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label6.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label6.Image = ((System.Drawing.Image)(resources.GetObject("label6.Image")));
+            this.label6.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label6.Location = new System.Drawing.Point(9, 109);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(160, 15);
@@ -182,7 +240,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(153, 3);
+            this.checkBox1.Location = new System.Drawing.Point(170, 38);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(15, 14);
             this.checkBox1.TabIndex = 1;
@@ -206,7 +264,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "ucDay";
             this.Padding = new System.Windows.Forms.Padding(1);
-            this.Size = new System.Drawing.Size(180, 159);
+            this.Size = new System.Drawing.Size(190, 206);
             this.Load += new System.EventHandler(this.ucDay_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -230,5 +288,9 @@
         private Label lblFolgaLideres;
         private Label lblLideres;
         private Label label6;
+        private Label label7;
+        private Label lblOperadores;
+        private Label lblFolgaOperadores;
+        private Label lblFeriado;
     }
 }

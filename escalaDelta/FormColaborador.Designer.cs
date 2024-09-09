@@ -33,14 +33,23 @@
             this.dateTimePickerHoraSaida = new System.Windows.Forms.DateTimePicker();
             this.dgvColaboradores = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnCancelCargo = new System.Windows.Forms.Button();
+            this.btnDeleteCargo = new System.Windows.Forms.Button();
+            this.btnUpdateCargo = new System.Windows.Forms.Button();
+            this.btnNewCargo = new System.Windows.Forms.Button();
+            this.txtEditCargo = new System.Windows.Forms.TextBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.btnNewInsertUpdate = new System.Windows.Forms.Button();
             this.btnEditCancel = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label5 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColaboradores)).BeginInit();
             this.panel1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,7 +57,7 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(93, 10);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(177, 23);
+            this.textBox1.Size = new System.Drawing.Size(121, 23);
             this.textBox1.TabIndex = 3;
             // 
             // label1
@@ -101,7 +110,7 @@
             this.dateTimePickerHoraEntrada.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePickerHoraEntrada.Location = new System.Drawing.Point(93, 46);
             this.dateTimePickerHoraEntrada.Name = "dateTimePickerHoraEntrada";
-            this.dateTimePickerHoraEntrada.Size = new System.Drawing.Size(177, 23);
+            this.dateTimePickerHoraEntrada.Size = new System.Drawing.Size(121, 23);
             this.dateTimePickerHoraEntrada.TabIndex = 9;
             // 
             // dateTimePickerHoraSaida
@@ -110,7 +119,7 @@
             this.dateTimePickerHoraSaida.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePickerHoraSaida.Location = new System.Drawing.Point(93, 78);
             this.dateTimePickerHoraSaida.Name = "dateTimePickerHoraSaida";
-            this.dateTimePickerHoraSaida.Size = new System.Drawing.Size(177, 23);
+            this.dateTimePickerHoraSaida.Size = new System.Drawing.Size(121, 23);
             this.dateTimePickerHoraSaida.TabIndex = 10;
             // 
             // dgvColaboradores
@@ -125,6 +134,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.groupBox1);
+            this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Controls.Add(this.comboBox1);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label1);
@@ -139,6 +150,103 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(430, 159);
             this.panel1.TabIndex = 13;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnCancelCargo);
+            this.groupBox1.Controls.Add(this.btnDeleteCargo);
+            this.groupBox1.Controls.Add(this.btnUpdateCargo);
+            this.groupBox1.Controls.Add(this.btnNewCargo);
+            this.groupBox1.Controls.Add(this.txtEditCargo);
+            this.groupBox1.Location = new System.Drawing.Point(248, 39);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(179, 80);
+            this.groupBox1.TabIndex = 14;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Edição Cargo";
+            this.groupBox1.Visible = false;
+            // 
+            // btnCancelCargo
+            // 
+            this.btnCancelCargo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnCancelCargo.Location = new System.Drawing.Point(123, 47);
+            this.btnCancelCargo.Name = "btnCancelCargo";
+            this.btnCancelCargo.Size = new System.Drawing.Size(50, 23);
+            this.btnCancelCargo.TabIndex = 23;
+            this.btnCancelCargo.Text = "cancel";
+            this.btnCancelCargo.UseVisualStyleBackColor = true;
+            this.btnCancelCargo.Click += new System.EventHandler(this.btnCancelCargo_Click);
+            // 
+            // btnDeleteCargo
+            // 
+            this.btnDeleteCargo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnDeleteCargo.Location = new System.Drawing.Point(69, 47);
+            this.btnDeleteCargo.Name = "btnDeleteCargo";
+            this.btnDeleteCargo.Size = new System.Drawing.Size(50, 23);
+            this.btnDeleteCargo.TabIndex = 22;
+            this.btnDeleteCargo.Text = "delete";
+            this.btnDeleteCargo.UseVisualStyleBackColor = true;
+            this.btnDeleteCargo.Click += new System.EventHandler(this.btnDeleteCargo_Click);
+            // 
+            // btnUpdateCargo
+            // 
+            this.btnUpdateCargo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnUpdateCargo.Location = new System.Drawing.Point(6, 47);
+            this.btnUpdateCargo.Name = "btnUpdateCargo";
+            this.btnUpdateCargo.Size = new System.Drawing.Size(61, 23);
+            this.btnUpdateCargo.TabIndex = 21;
+            this.btnUpdateCargo.Text = "update";
+            this.btnUpdateCargo.UseVisualStyleBackColor = true;
+            this.btnUpdateCargo.Click += new System.EventHandler(this.btnUpdateCargo_Click);
+            // 
+            // btnNewCargo
+            // 
+            this.btnNewCargo.Location = new System.Drawing.Point(123, 18);
+            this.btnNewCargo.Name = "btnNewCargo";
+            this.btnNewCargo.Size = new System.Drawing.Size(50, 23);
+            this.btnNewCargo.TabIndex = 20;
+            this.btnNewCargo.Text = "new";
+            this.btnNewCargo.UseVisualStyleBackColor = true;
+            this.btnNewCargo.Click += new System.EventHandler(this.btnNewCargo_Click);
+            // 
+            // txtEditCargo
+            // 
+            this.txtEditCargo.Location = new System.Drawing.Point(6, 18);
+            this.txtEditCargo.Name = "txtEditCargo";
+            this.txtEditCargo.Size = new System.Drawing.Size(113, 23);
+            this.txtEditCargo.TabIndex = 19;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox1.Image = global::escalaDelta.Properties.Resources.icons8_edit_16;
+            this.pictureBox1.Location = new System.Drawing.Point(396, 10);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(31, 23);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 13;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(293, 10);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(97, 23);
+            this.comboBox1.TabIndex = 12;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(248, 13);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(39, 15);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Cargo";
             // 
             // btnNewInsertUpdate
             // 
@@ -180,24 +288,6 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(430, 32);
             this.flowLayoutPanel1.TabIndex = 11;
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(279, 13);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(39, 15);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Cargo";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(324, 10);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(97, 23);
-            this.comboBox1.TabIndex = 12;
-            // 
             // FormColaborador
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -211,6 +301,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvColaboradores)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -233,5 +326,12 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private ComboBox comboBox1;
         private Label label5;
+        private GroupBox groupBox1;
+        private Button btnCancelCargo;
+        private Button btnDeleteCargo;
+        private Button btnUpdateCargo;
+        private Button btnNewCargo;
+        private TextBox txtEditCargo;
+        private PictureBox pictureBox1;
     }
 }

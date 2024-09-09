@@ -9,6 +9,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,12 +19,10 @@ namespace escalaDelta {
 
         private PrivateFontCollection privateFonts = new PrivateFontCollection();
         public static int _month, _year;
+        private Size bestSizePrint;
 
         public FormCalendar(int mes, int ano) {
-            InitializeComponent();
-            
-            flowLayoutPanel1.AutoScroll = false;
-
+            InitializeComponent();    
             flowLayoutPanel1.WrapContents = true; // Permite que os controles quebrem linha
 
             _month = mes;
@@ -62,9 +61,14 @@ namespace escalaDelta {
         }
 
         private void pictureBox1_Click(object sender, EventArgs e) {
+            var oldFormBorderStyle = FormBorderStyle;
+            this.FormBorderStyle = FormBorderStyle.None;
 
-            //var old = FormBorderStyle;
-            //this.FormBorderStyle = FormBorderStyle.None;
+            Size oldSize = Size;
+            this.MaximumSize = bestSizePrint;
+            bool Result = MoveWindow(this.Handle, this.Left, this.Top, bestSizePrint.Width, bestSizePrint.Height, true);
+            flowLayoutPanel1.AutoScroll = false;
+            
             try {
                 var image = this.CaptureScreenFullForm();
                 Clipboard.SetImage(image);
@@ -76,12 +80,16 @@ namespace escalaDelta {
             } catch (Exception ex) {
                 MessageBox.Show($"Erro ao copiar para a área de transferência: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             } finally {
-                //this.FormBorderStyle = old;
+                this.FormBorderStyle = oldFormBorderStyle;
+                this.Size = oldSize;
+                flowLayoutPanel1.AutoScroll = true ;
+
             }
         }
 
         private void FormCalendar_Load(object sender, EventArgs e) {
-
+            this.Height = Screen.PrimaryScreen.WorkingArea.Height;
+            this.Top = Screen.PrimaryScreen.WorkingArea.Top;
         }
 
         private void loadUltimasEscalasCalendario() {
@@ -100,14 +108,16 @@ namespace escalaDelta {
                     connection.Open();
                     // Comando SQL de todas escala do ultimo mes gerado
                     string query = @"
-                            SELECT 
+SELECT 
     ct.data,
     GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'PIER' THEN c.nome ELSE NULL END) AS PIER,
     GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'ATL' THEN ' ' || c.nome  ELSE NULL END) AS ATL,
     GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'JFK' THEN ' ' || c.nome ELSE NULL END) AS JFK,
     GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 1) THEN c.nome  ELSE NULL END) AS FOLGA_AUXILIARES,
     GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 2 ) THEN ' ' || c.nome ELSE NULL END) AS LIDERES,
-    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES
+    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES,
+        GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 7 ) THEN ' ' || c.nome ELSE NULL END) AS OPERADORES,
+    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 7) THEN c.nome  ELSE NULL END) AS FOLGA_OPERADORES
 FROM 
     ColaboradorTrabalho ct
 LEFT JOIN 
@@ -139,11 +149,13 @@ ORDER BY
                                     string? folga_auxiliares = reader["FOLGA_AUXILIARES"].ToString()?.Replace(",", "\r\n");
                                     string? lideres = reader["LIDERES"].ToString();
                                     string? folga_lideres = reader["FOLGA_LIDERES"].ToString()?.Replace(",", "\r\n");
+                                    string? operadores = reader["OPERADORES"].ToString();
+                                    string? folga_operadores = reader["FOLGA_OPERADORES"].ToString()?.Replace(",", "\r\n");
                                     // Formata os valores para exibir somente a hora
                                     int dayEscala = Convert.ToInt32(DateTime.Parse(dataEscala).ToString("dd"));
                                     ucDay uc;
                                     if (i == dayEscala) {
-                                        uc = new ucDay(i.ToString(), pier, atl, jfk, folga_auxiliares, lideres, folga_lideres);
+                                        uc = new ucDay(i.ToString(), pier, atl, jfk, folga_auxiliares, lideres, folga_lideres, operadores, folga_operadores);
                                         flowLayoutPanel1.Controls.Add(uc);
                                     } else {
                                         while (i < dayEscala) {
@@ -152,21 +164,22 @@ ORDER BY
                                             i++;
                                         }
                                         if (i == dayEscala) {
-                                            uc = new ucDay(i.ToString(), pier, atl, jfk, folga_auxiliares, lideres, folga_lideres);
+                                            uc = new ucDay(i.ToString(), pier, atl, jfk, folga_auxiliares, lideres, folga_lideres, operadores, folga_operadores);
                                             flowLayoutPanel1.Controls.Add(uc);
                                         }
                                     }
                                 }
                             }
 
-                            //ajusta a altura do formulário para mostrar todos cards
+                            //obtem o tamanho perfeito para printscreen no formulário
                             Control cardExample = flowLayoutPanel1.Controls[0];
                             int totalCards = flowLayoutPanel1.Controls.Count;
                             int tuplas = (int)Math.Ceiling(totalCards / 7.0);
                             int marginHeight = tuplas * (cardExample.Margin.Top + cardExample.Margin.Bottom);
-                            int bestHeight = ((tuplas* cardExample.Height) +marginHeight)-flowLayoutPanel1.Height;
-                            this.Height += bestHeight;
-                            CenterToScreen();
+                            int bestHeight = Height + ((tuplas* cardExample.Height) +marginHeight)-flowLayoutPanel1.Height;
+                            bestSizePrint = new Size(Width, bestHeight);  
+                            
+
                         }
                     }
                     // Fechar a conexão com o banco de dados
@@ -176,6 +189,8 @@ ORDER BY
                 MessageBox.Show("Ocorreu um erro ao obter os dados dos colaboradores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        [DllImport("User32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool Repaint);
 
     }
 }

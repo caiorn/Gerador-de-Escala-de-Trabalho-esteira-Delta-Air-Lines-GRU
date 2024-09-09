@@ -129,7 +129,7 @@
             this.dataGridView1.Location = new System.Drawing.Point(20, 317);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(872, 251);
+            this.dataGridView1.Size = new System.Drawing.Size(951, 251);
             this.dataGridView1.TabIndex = 18;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             // 
@@ -150,7 +150,7 @@
             this.cadastrarFuncionarioToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(904, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(983, 24);
             this.menuStrip1.TabIndex = 20;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -268,7 +268,7 @@
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.rtxtFuturaFilaPIER);
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox2.Location = new System.Drawing.Point(627, 77);
+            this.groupBox2.Location = new System.Drawing.Point(624, 89);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(200, 222);
             this.groupBox2.TabIndex = 30;
@@ -300,7 +300,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.BackColor = System.Drawing.Color.DarkGreen;
-            this.label1.Location = new System.Drawing.Point(664, 582);
+            this.label1.Location = new System.Drawing.Point(907, 580);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(17, 15);
             this.label1.TabIndex = 33;
@@ -309,7 +309,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(687, 582);
+            this.label3.Location = new System.Drawing.Point(930, 580);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(42, 15);
             this.label3.TabIndex = 34;
@@ -394,7 +394,7 @@
             // btnShowInCalendar
             // 
             this.btnShowInCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnShowInCalendar.Location = new System.Drawing.Point(351, 576);
+            this.btnShowInCalendar.Location = new System.Drawing.Point(250, 574);
             this.btnShowInCalendar.Name = "btnShowInCalendar";
             this.btnShowInCalendar.Size = new System.Drawing.Size(141, 23);
             this.btnShowInCalendar.TabIndex = 42;
@@ -406,7 +406,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(904, 611);
+            this.ClientSize = new System.Drawing.Size(983, 611);
             this.Controls.Add(this.btnShowInCalendar);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.btnGerarAte);

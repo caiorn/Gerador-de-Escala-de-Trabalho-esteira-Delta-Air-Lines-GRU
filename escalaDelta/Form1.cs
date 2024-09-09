@@ -1,4 +1,5 @@
 using escalaDelta.Utils;
+using System;
 using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
@@ -46,6 +47,9 @@ namespace escalaDelta {
 
             CriarBancoDados();
             loadColaboradores();
+
+            DateTime today = DateTime.Today;
+            dateTimePicker1.Value = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month)); ;
 
             //configuração listbox
             listBoxTrabalha.AllowDrop = true;
@@ -414,7 +418,9 @@ Pier:
                                 GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'JFK' THEN ' ' || c.nome ELSE NULL END) AS JFK,
                                 GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 1) THEN c.nome  ELSE NULL END) AS FOLGA_AUXILIARES,
                                 GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 2 ) THEN ' ' || c.nome ELSE NULL END) AS LIDERES,
-                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES
+                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES,
+                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 7 ) THEN ' ' || c.nome ELSE NULL END) AS OPERADORES,
+                                GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 7) THEN c.nome  ELSE NULL END) AS FOLGA_OPERADORES
                             FROM 
                                 ColaboradorTrabalho ct
                             LEFT JOIN 
@@ -466,8 +472,8 @@ Pier:
                     using (SQLiteCommand command = new SQLiteCommand(query, connection)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                string nome = (string)reader["nome"];
-                                string local_trabalhou = (string)reader["local_trabalho"];
+                                string nome =               (string)reader["nome"];
+                                string local_trabalhou =    (string)reader["local_trabalho"];
 
                                 Colaborador? colaborador = colaboradores.Find(c => c.Nome == nome);
                                 if (colaborador != null) {
@@ -604,10 +610,10 @@ Pier:
                         cmd.ExecuteNonQuery();
                     }
 
-                    //lideres
+                    //lideres e operadores
                     foreach (Colaborador colaborador in colaboradores) {
                         if (colaborador.Trabalha(dataProximaEscala)) {
-                            if (colaborador.Cargo?.Id == 2) {
+                            if (colaborador.Cargo?.Id == 2 || colaborador.Cargo?.Id == 7) {
                                 cmd.Parameters.Clear();
                                 cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
                                 cmd.Parameters.AddWithValue("@localTrabalho", "");
