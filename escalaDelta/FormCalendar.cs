@@ -44,8 +44,8 @@ namespace escalaDelta {
             privateFonts.AddFontFile(fontPath);
 
             // Atribui a fonte personalizada a um controle específico, por exemplo, um Label
-            Font customFont1 = new Font(privateFonts.Families[0], 16F, FontStyle.Bold) ; // Tamanho 12, você pode ajustar conforme necessário
-            Font customFont2 = new Font(privateFonts.Families[0], 12F); // Tamanho 12, você pode ajustar conforme necessário
+            Font customFont1 = new Font(privateFonts.Families[0], 16F, FontStyle.Bold) ; 
+            Font customFont2 = new Font(privateFonts.Families[0], 14F); 
             lblMonth.Font = customFont1;
             label1.Font = customFont2;
             label2.Font = customFont2;

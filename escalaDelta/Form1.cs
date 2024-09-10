@@ -32,11 +32,7 @@ namespace escalaDelta {
         private List<Colaborador> fila_PIER_Present { get; set; }
         private List<Colaborador> fila_ATL_Future { get; set; }
         private List<Colaborador> fila_PIER_Future { get; set; }
-
         private Colaborador PIER_work { get; set; }
-        private List<Colaborador> auxiliares_ATL { get; set; }
-        private List<Colaborador> auxiliares_JFK { get; set; }
-
         public DateOnly dataProximaEscala { get; set; }
 
         private ListBox listBoxOrigem;
@@ -48,16 +44,12 @@ namespace escalaDelta {
             CriarBancoDados();
             loadColaboradores();
 
+            ListBoxesConfigureProperties();
+            ListBoxesAddListeners();
+
             DateTime today = DateTime.Today;
             dateTimePicker1.Value = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month)); ;
 
-            //configuração listbox
-            listBoxTrabalha.AllowDrop = true;
-            listBoxFolga.AllowDrop = true;
-            listBoxOutros.AllowDrop = true;
-            listBoxTrabalha.DisplayMember = "Nome";
-            listBoxFolga.DisplayMember = "Nome";
-            listBoxOutros.DisplayMember = "Nome";
 
             ExtensionsDataGridView.configurePropertiesDataGridView(dataGridView1);
 
@@ -73,17 +65,117 @@ namespace escalaDelta {
                            ("ATL", 30),
                            ("JFK", 30),
                            ("LIDERES", 30),
+                           ("OPERADORES", 30),
                            ("FOLGA_AUXILIARES", 25),
-                           ("FOLGA_LIDERES", 25)
+                           ("FOLGA_LIDERES", 25),
+                           ("FOLGA_OPERADORES", 25)
            );
         }
+
+        private void ListBoxesConfigureProperties() {
+            //configuração listbox
+            listBox1Pier.AllowDrop = true;
+            listBox2ATL.AllowDrop = true;
+            listBox3JFK.AllowDrop = true;
+            listBox1LideresON.AllowDrop = true;
+            listBox1Operadores.AllowDrop = true;
+            listBoxFolga.AllowDrop = true;
+            listBoxOutros.AllowDrop = true;
+
+            listBox1Pier.DisplayMember = "Nome";
+            listBox2ATL.DisplayMember = "Nome";
+            listBox3JFK.DisplayMember = "Nome";
+            listBox1LideresON.DisplayMember = "Nome";
+            listBox1Operadores.DisplayMember = "Nome";
+            listBoxFolga.DisplayMember = "Nome";
+            listBoxOutros.DisplayMember = "Nome";
+        }
+
+        private void ListBoxesAddListeners() {
+            // Associa os eventos de arrastar e soltar para cada ListBox
+            listBox1Pier.DragEnter += ListBox_DragEnter;
+            listBox1Pier.DragDrop += ListBox_DragDrop;
+            listBox1Pier.MouseDown += listBox_MouseDown;
+
+            listBox2ATL.DragEnter += ListBox_DragEnter;
+            listBox2ATL.DragDrop += ListBox_DragDrop;
+            listBox2ATL.MouseDown += listBox_MouseDown;
+
+            listBox3JFK.DragEnter += ListBox_DragEnter;
+            listBox3JFK.DragDrop += ListBox_DragDrop;
+            listBox3JFK.MouseDown += listBox_MouseDown;
+
+            listBox1LideresON.DragEnter += ListBox_DragEnter;
+            listBox1LideresON.DragDrop += ListBox_DragDrop;
+            listBox1LideresON.MouseDown += listBox_MouseDown;
+
+            listBox1Operadores.DragEnter += ListBox_DragEnter;
+            listBox1Operadores.DragDrop += ListBox_DragDrop;
+            listBox1Operadores.MouseDown += listBox_MouseDown;
+
+            listBoxFolga.DragEnter += ListBox_DragEnter;
+            listBoxFolga.DragDrop += ListBox_DragDrop;
+            listBoxFolga.MouseDown += listBox_MouseDown;
+
+            listBoxOutros.DragEnter += ListBox_DragEnter;
+            listBoxOutros.DragDrop += ListBox_DragDrop;
+            listBoxOutros.MouseDown += listBox_MouseDown;
+        }
+
+        // Evento DragEnter para todos os ListBoxes
+        private void ListBox_DragEnter(object sender, DragEventArgs e) {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        // Evento DragDrop para todos os ListBoxes
+        private void ListBox_DragDrop(object sender, DragEventArgs e) {
+            ListBox listBoxDestino = sender as ListBox;
+            Colaborador colaboradorItem = e.Data.GetData(typeof(Colaborador)) as Colaborador;
+
+            if (listBoxDestino == listBoxFolga) {
+                colaboradorItem.NaoTrabalhaPorOutrosMotivos = false;
+                if (!colaboradorItem.Folga(dataProximaEscala)) {
+                    colaboradorItem.FolgaManual = true;
+                }
+            } else if (listBoxDestino == listBoxOutros) {
+                colaboradorItem.FolgaManual = false;
+                colaboradorItem.NaoTrabalhaPorOutrosMotivos = true;
+            } else  {
+                colaboradorItem.NaoTrabalhaPorOutrosMotivos = false;
+                colaboradorItem.FolgaManual = false;
+            }
+
+            // Move o item da ListBox de origem para a ListBox de destino
+            listBoxOrigem.Items.Remove(colaboradorItem);
+            listBoxDestino.Items.Add(colaboradorItem);
+
+            PintarTrabalhadoresENaoTrabalhadores();
+            //definirEscalaHojeEAtualizarProximaEscalaFutura();
+
+        }
+
+        // Evento MouseDown para iniciar o arrastar para todos os ListBoxes
+        private void listBox_MouseDown(object sender, MouseEventArgs e) {
+            ListBox listBox = sender as ListBox;
+            int index = listBox.IndexFromPoint(e.X, e.Y);
+            if (index != ListBox.NoMatches) {
+                object selectedItem = listBox.Items[index];
+
+                // Armazena a ListBox de origem
+                listBoxOrigem = listBox;
+
+                // Define os dados de arrastar e soltar
+                listBox.DoDragDrop(selectedItem, DragDropEffects.Move);
+            }
+        }
+
 
         private void refreshDatas() {
             loadUltimasEscalasDataGridView();
             buscarDataUltimaEscalaGerada();
             //passar datas por parametro. +mais controle;
             definirColaboradoresAusenteOutros();
-            popularListsBoxes();
+            popularListsBoxesLideresOperadoresFolgaOutros();
 
             loadSetUpQueueATLandPIER();
             definirEscalaHojeEAtualizarProximaEscalaFutura();
@@ -92,9 +184,10 @@ namespace escalaDelta {
             PintarTrabalhadoresENaoTrabalhadores();
         }
 
-        private void popularListsBoxes() {
+        private void popularListsBoxesLideresOperadoresFolgaOutros() {
             // Configurando o listboxes
-            listBoxTrabalha.Items.Clear();
+            listBox1LideresON.Items.Clear();
+            listBox1Operadores.Items.Clear();
             listBoxFolga.Items.Clear();
             listBoxOutros.Items.Clear();
             foreach (var colaborador in colaboradores) {
@@ -103,8 +196,10 @@ namespace escalaDelta {
                     listBoxOutros.Items.Add(colaborador);
                 } else if (!colaborador.Trabalha(dataProximaEscala)) {
                     listBoxFolga.Items.Add(colaborador);
-                } else {
-                    listBoxTrabalha.Items.Add(colaborador);
+                } else if(colaborador.Cargo?.Id == 2) {
+                    listBox1LideresON.Items.Add(colaborador);
+                }else if(colaborador.Cargo?.Id == 7) {
+                    listBox1Operadores.Items.Add(colaborador);
                 }
             }
         }
@@ -127,8 +222,10 @@ namespace escalaDelta {
 
             //deve ter ao menos 1 colaborador de 6h no ATL e JFK
             PIER_work = null;
-            auxiliares_ATL = new List<Colaborador>();
-            auxiliares_JFK = new List<Colaborador>();
+            listBox1Pier.Items.Clear();
+            listBox2ATL.Items.Clear();
+            listBox3JFK.Items.Clear();
+
             List<Colaborador> auxiliares = colaboradores.Where(c => c.Cargo?.Id == 1).ToList();
             List<Colaborador> lideres = colaboradores.Where(c => c.Cargo?.Id == 2).ToList();
 
@@ -153,7 +250,7 @@ namespace escalaDelta {
 
             if (todosDe6hQueTrabalhara.Count() > 2) {
                 //se ao menos 3 de 6h trabalharao, definir primeiro o pier Justamente.
-                PIER_work = fila_PIER_Present.First(c => c.Trabalha(dataProximaEscala) && !auxiliares_JFK.Contains(c)); ;                
+                PIER_work = fila_PIER_Present.First(c => c.Trabalha(dataProximaEscala) && !listBox3JFK.Items.Contains(c)); ;                
                 HojeATLde6h = fila_ATL_Present.FirstOrDefault(c => c.Trabalha(dataProximaEscala) && c.HorasTrabalho == 6 && c.Nome != PIER_work.Nome);
                 HojeJFKde6h = fila_ATL_Present.LastOrDefault(c => c.Trabalha(dataProximaEscala) && c.HorasTrabalho == 6 && c.Nome != HojeATLde6h?.Nome && c.Nome != PIER_work.Nome);                    
             } else {
@@ -162,11 +259,16 @@ namespace escalaDelta {
                 PIER_work = fila_PIER_Present.FirstOrDefault(c => c.Trabalha(dataProximaEscala) && c.Nome != HojeATLde6h?.Nome && c.Nome != HojeJFKde6h?.Nome);
             }
             if (HojeATLde6h != null) {
-                auxiliares_ATL.Add(HojeATLde6h);
+                listBox2ATL.Items.Add(HojeATLde6h);
+                //auxiliares_ATL.Add(HojeATLde6h);
             }
             if (HojeJFKde6h != null) {
-                auxiliares_JFK.Add(HojeJFKde6h);
+                listBox3JFK.Items.Add(HojeJFKde6h);
+                //auxiliares_JFK.Add(HojeJFKde6h);
             }
+            listBox1Pier.Items.Add(PIER_work);
+
+
 
             //se tiver 3 de cada lado + pier e se tiver alguem que trabalha depois da 18:30h, só fara o pier ou 104 
             if (auxiliares.Count(c => c.Trabalha(dataProximaEscala)) >= 7) {
@@ -174,11 +276,11 @@ namespace escalaDelta {
                     c.Entrada?.Hour >= 18 && c.Entrada?.Minute >= 30 &&
                     c.Trabalha(dataProximaEscala) &&
                     c.Nome != PIER_work.Nome &&
-                    !auxiliares_ATL.Contains(c) &&
-                    !auxiliares_JFK.Contains(c));
+                    !listBox2ATL.Items.Contains(c) &&
+                    !listBox3JFK.Items.Contains(c));
 
                 if (colaboradorQueEntraApos19hDisponivel.Count() == 1) {
-                    auxiliares_ATL.Add(colaboradorQueEntraApos19hDisponivel.First());
+                    listBox2ATL.Items.Add(colaboradorQueEntraApos19hDisponivel.First());
                 }
             }
             //calculo para dividir a equipe caso ultrapasse de 3 colaborador pra cada
@@ -189,40 +291,40 @@ namespace escalaDelta {
             var doisPrimeirosFilaATL = fila_ATL_Future.Where(c =>
                 c.Trabalha(dataProximaEscala) &&
                 c.Nome != PIER_work?.Nome &&
-                !auxiliares_ATL.Contains(c) &&
-                !auxiliares_JFK.Contains(c) 
-                ).Take(((qtnTrabalhara - qtdSobra) / 2) - auxiliares_ATL.Count); //divisao de turma, caso impar ATL ficará 1 a mais.
-            auxiliares_ATL.AddRange(doisPrimeirosFilaATL);
+                !listBox2ATL.Items.Contains(c) &&
+                !listBox3JFK.Items.Contains(c) 
+                ).Take(((qtnTrabalhara - qtdSobra) / 2) - listBox2ATL.Items.Count); //divisao de turma, caso impar ATL ficará 1 a mais.
+            listBox2ATL.Items.AddRange(doisPrimeirosFilaATL.ToArray());
 
             // Movendo quem ta trabalhando no ATL para o final da fila ATL pela sequencia
             var ATL_work_sequence = fila_ATL_Future.ToList();
-            ATL_work_sequence.RemoveAll(colaborador => !auxiliares_ATL.Contains(colaborador));
-            fila_ATL_Future.RemoveAll(colaborador => auxiliares_ATL.Contains(colaborador));
+            ATL_work_sequence.RemoveAll(colaborador => !listBox2ATL.Items.Contains(colaborador));
+            fila_ATL_Future.RemoveAll(colaborador => listBox2ATL.Items.Contains(colaborador));
             fila_ATL_Future.AddRange(ATL_work_sequence);
 
             //adiciona o restante pela sequencia para trabalhar no voo 226
             var sobra_JFK = fila_ATL_Future.Where(c =>
                 c.Trabalha(dataProximaEscala) &&
                 c.Nome != PIER_work?.Nome &&
-                !auxiliares_JFK.Contains(c) &&
-                !auxiliares_ATL.Contains(c)
+                !listBox3JFK.Items.Contains(c) &&
+                !listBox2ATL.Items.Contains(c)
                 );
-            auxiliares_JFK.AddRange(sobra_JFK);
+            listBox3JFK.Items.AddRange(sobra_JFK.ToArray());
 
             //o pier vai para o final da fila PIER
             fila_PIER_Future.Remove(PIER_work);
             fila_PIER_Future.Add(PIER_work);
 
-            string saudacao = DateTime.Now.Hour < 12 ? "Bom dia" : (DateTime.Now.Hour < 18 ? "Boa tarde" : "Boa noite");            string texto =
-$@"Escala de {dataProximaEscala.ToString("ddd", new CultureInfo("pt-BR"))} {dataProximaEscala.ToString("dd/MM")}
-Pier: 
-  {PIER_work.Nome}
-226: 
-  {string.Join("\r\n  ", auxiliares_JFK.Select(c => c.Nome))}
-104: 
-  {string.Join("\r\n  ", auxiliares_ATL.Select(c => c.Nome))}
-";
-            rtxtProximaEscala.Text = texto;
+//            string saudacao = DateTime.Now.Hour < 12 ? "Bom dia" : (DateTime.Now.Hour < 18 ? "Boa tarde" : "Boa noite");            string texto =
+//$@"Escala de {dataProximaEscala.ToString("ddd", new CultureInfo("pt-BR"))} {dataProximaEscala.ToString("dd/MM")}
+//Pier: 
+//  {PIER_work.Nome}
+//226: 
+//  {string.Join("\r\n  ", auxiliares_JFK.Select(c => c.Nome))}
+//104: 
+//  {string.Join("\r\n  ", listBox2ATL.Items.Select(c => c.Nome))}
+//";
+            //rtxtProximaEscala.Text = texto;
             atualizarRichTextBoxFuturasFilas();
         }
 
@@ -234,52 +336,6 @@ Pier:
         private void atualizarRithTextBoxFilasPresent() {
             richTextBoxFILAATL.Text = string.Join("\r\n", fila_ATL_Present.Select(c => c.Nome));
             richTextBoxFILAPIER.Text = string.Join("\r\n", fila_PIER_Present.Select(c => c.Nome));
-        }
-
-        private void ListBox_DragEnter(object sender, DragEventArgs e) {
-            e.Effect = DragDropEffects.Move;
-        }
-
-        // Evento DragDrop para todos os ListBoxes
-        private void ListBox_DragDrop(object sender, DragEventArgs e) {
-            ListBox listBoxDestino = sender as ListBox;
-            Colaborador colaboradorItem = e.Data.GetData(typeof(Colaborador)) as Colaborador;
-
-            if (listBoxDestino == listBoxFolga) {
-                colaboradorItem.NaoTrabalhaPorOutrosMotivos = false;
-                if (!colaboradorItem.Folga(dataProximaEscala)) {
-                    colaboradorItem.FolgaManual = true;
-                }
-            } else if (listBoxDestino == listBoxOutros) {
-                colaboradorItem.FolgaManual = false;
-                colaboradorItem.NaoTrabalhaPorOutrosMotivos = true;
-            } else if (listBoxDestino == listBoxTrabalha) {
-                colaboradorItem.NaoTrabalhaPorOutrosMotivos = false;
-                colaboradorItem.FolgaManual = false;
-            }
-
-            // Move o item da ListBox de origem para a ListBox de destino
-            listBoxOrigem.Items.Remove(colaboradorItem);
-            listBoxDestino.Items.Add(colaboradorItem);
-
-            PintarTrabalhadoresENaoTrabalhadores();
-            definirEscalaHojeEAtualizarProximaEscalaFutura();
-
-        }
-
-        // Evento MouseDown para iniciar o arrastar para todos os ListBoxes
-        private void listBox_MouseDown(object sender, MouseEventArgs e) {
-            ListBox listBox = sender as ListBox;
-            int index = listBox.IndexFromPoint(e.X, e.Y);
-            if (index != ListBox.NoMatches) {
-                object selectedItem = listBox.Items[index];
-
-                // Armazena a ListBox de origem
-                listBoxOrigem = listBox;
-
-                // Define os dados de arrastar e soltar
-                listBox.DoDragDrop(selectedItem, DragDropEffects.Move);
-            }
         }
 
         private void listBoxFolga_SelectedIndexChanged(object sender, EventArgs e) {
@@ -574,7 +630,7 @@ Pier:
                         dataProximaEscala = dataUltimaEscala.AddDays(1);
                     }
                     DateOnly hoje = DateOnly.FromDateTime(DateTime.Today);
-                    lblInfoCheckbox.Text = $"Quem trabalha {(dataProximaEscala == hoje ? "Hoje" : "")}\r\n{dataProximaEscala}";
+                    groupBox3.Text = $"Trabalhará {(dataProximaEscala == hoje ? "Hoje" : "")}\r\n{dataProximaEscala}";
                 }
             }
         }
@@ -594,7 +650,7 @@ Pier:
                     cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                     cmd.ExecuteNonQuery();
 
-                    foreach (var auxiliarTrabalhouATL in auxiliares_ATL) {
+                    foreach (Colaborador auxiliarTrabalhouATL in listBox2ATL.Items) {
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@idColaborador", auxiliarTrabalhouATL.Id);
                         cmd.Parameters.AddWithValue("@localTrabalho", "ATL");
@@ -602,7 +658,7 @@ Pier:
                         cmd.ExecuteNonQuery();
                     }
 
-                    foreach (var auxiliarTrabalhouJFK in auxiliares_JFK) {
+                    foreach (Colaborador auxiliarTrabalhouJFK in listBox3JFK.Items) {
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@idColaborador", auxiliarTrabalhouJFK.Id);
                         cmd.Parameters.AddWithValue("@localTrabalho", "JFK");
@@ -610,10 +666,23 @@ Pier:
                         cmd.ExecuteNonQuery();
                     }
 
-                    //lideres e operadores
-                    foreach (Colaborador colaborador in colaboradores) {
+                    //lideres
+                    foreach (Colaborador colaborador in listBox1LideresON.Items) {
                         if (colaborador.Trabalha(dataProximaEscala)) {
-                            if (colaborador.Cargo?.Id == 2 || colaborador.Cargo?.Id == 7) {
+                            if (colaborador.Cargo?.Id == 2) {
+                                cmd.Parameters.Clear();
+                                cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
+                                cmd.Parameters.AddWithValue("@localTrabalho", "");
+                                cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    //operadores
+                    foreach (Colaborador colaborador in listBox1Operadores.Items) {
+                        if (colaborador.Trabalha(dataProximaEscala)) {
+                            if (colaborador.Cargo?.Id == 7) {
                                 cmd.Parameters.Clear();
                                 cmd.Parameters.AddWithValue("@idColaborador", colaborador.Id);
                                 cmd.Parameters.AddWithValue("@localTrabalho", "");
@@ -760,6 +829,10 @@ Pier:
                     fc.Show();
                 }
             }
-        }        
+        }
+
+        private void label3_Click(object sender, EventArgs e) {
+
+        }
     }
 }
