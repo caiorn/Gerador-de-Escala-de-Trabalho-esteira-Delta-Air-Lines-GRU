@@ -113,11 +113,11 @@ SELECT
     GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'PIER' THEN c.nome ELSE NULL END) AS PIER,
     GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'ATL' THEN ' ' || c.nome  ELSE NULL END) AS ATL,
     GROUP_CONCAT(DISTINCT CASE WHEN ct.local_trabalho = 'JFK' THEN ' ' || c.nome ELSE NULL END) AS JFK,
-    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 1) THEN c.nome  ELSE NULL END) AS FOLGA_AUXILIARES,
+    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 1) THEN c.nome  ELSE NULL END) AS FOLGA_AUXILIARES,
     GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 2 ) THEN ' ' || c.nome ELSE NULL END) AS LIDERES,
-    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES,
+    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 2) THEN c.nome  ELSE NULL END) AS FOLGA_LIDERES,
         GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = '' AND c.id_cargo = 7 ) THEN ' ' || c.nome ELSE NULL END) AS OPERADORES,
-    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho = 'FOLGA' AND c.id_cargo = 7) THEN c.nome  ELSE NULL END) AS FOLGA_OPERADORES
+    GROUP_CONCAT(DISTINCT CASE WHEN (ct.local_trabalho LIKE 'FOLGA%' AND c.id_cargo = 7) THEN c.nome  ELSE NULL END) AS FOLGA_OPERADORES
 FROM 
     ColaboradorTrabalho ct
 LEFT JOIN 
