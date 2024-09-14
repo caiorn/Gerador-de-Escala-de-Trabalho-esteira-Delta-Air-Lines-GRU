@@ -630,7 +630,7 @@ namespace escalaDelta {
                         dataProximaEscala = dataUltimaEscala.AddDays(1);
                     }
                     DateOnly hoje = DateOnly.FromDateTime(DateTime.Today);
-                    groupBox3.Text = $"Trabalhará {(dataProximaEscala == hoje ? "Hoje" : "")}\r\n{dataProximaEscala}";
+                    groupBox3.Text = $"Trabalhará {(dataProximaEscala == hoje ? "Hoje" : "")}{dataProximaEscala}";
                 }
             }
         }
@@ -833,6 +833,11 @@ namespace escalaDelta {
 
         private void label3_Click(object sender, EventArgs e) {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            FormCalendar2 fc2 = new FormCalendar2(05, 24);
+            fc2.Show();
         }
     }
 }

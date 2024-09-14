@@ -65,6 +65,7 @@
             this.label13 = new System.Windows.Forms.Label();
             this.listBox1LideresON = new System.Windows.Forms.ListBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -500,11 +501,22 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Não Trabalha";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(432, 576);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 46;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(940, 611);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.btnShowInCalendar);
@@ -587,5 +599,6 @@
         private Label label13;
         private ListBox listBox1LideresON;
         private GroupBox groupBox4;
+        private Button button1;
     }
 }
