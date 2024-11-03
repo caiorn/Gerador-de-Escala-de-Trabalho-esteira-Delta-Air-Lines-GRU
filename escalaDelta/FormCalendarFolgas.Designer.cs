@@ -93,7 +93,7 @@
             this.flowLayoutPanel1.Controls.Add(this.monthCalendar1);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(19, 109);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(874, 370);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(874, 574);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel2
@@ -816,7 +816,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(903, 491);
+            this.ClientSize = new System.Drawing.Size(990, 695);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.lblMonth);
             this.Controls.Add(this.flowLayoutPanel1);

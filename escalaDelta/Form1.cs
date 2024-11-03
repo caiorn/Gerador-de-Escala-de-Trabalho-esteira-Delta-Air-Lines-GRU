@@ -645,7 +645,7 @@ namespace escalaDelta {
 
                     string dataProximaEscalaStr = dataProximaEscala.ToString("yyyy-MM-dd");
 
-                    cmd.Parameters.AddWithValue("@idColaborador", PIER_work.Id);
+                    cmd.Parameters.AddWithValue("@idColaborador", ((Colaborador)listBox1Pier.Items[0]).Id);
                     cmd.Parameters.AddWithValue("@localTrabalho", "PIER");
                     cmd.Parameters.AddWithValue("@data", dataProximaEscalaStr);
                     cmd.ExecuteNonQuery();
