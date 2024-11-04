@@ -836,7 +836,7 @@ namespace escalaDelta {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            FormCalendar2 fc2 = new FormCalendar2(05, 24);
+            Form2 fc2 = new Form2();
             fc2.Show();
         }
     }
