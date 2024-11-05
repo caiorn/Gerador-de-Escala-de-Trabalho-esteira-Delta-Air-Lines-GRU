@@ -24,35 +24,27 @@
         /// </summary>
         private void InitializeComponent() {
             this.monthCalendar1 = new CustomControls.MonthCalendar();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // monthCalendar1
             // 
-            this.monthCalendar1.CalendarDimensions = new System.Drawing.Size(4, 4);
+            this.monthCalendar1.CalendarDimensions = new System.Drawing.Size(3, 4);
+            this.monthCalendar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.monthCalendar1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.monthCalendar1.Location = new System.Drawing.Point(27, 36);
+            this.monthCalendar1.Location = new System.Drawing.Point(0, 0);
             this.monthCalendar1.Name = "monthCalendar1";
             this.monthCalendar1.TabIndex = 0;
             this.monthCalendar1.Text = "monthCalendar1";
+            this.monthCalendar1.DateSelected += new System.EventHandler<System.Windows.Forms.DateRangeEventArgs>(this.monthCalendar1_DateSelected);
             // 
-            // dateTimePicker1
-            // 
-            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePicker1.Location = new System.Drawing.Point(27, 7);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(102, 23);
-            this.dateTimePicker1.TabIndex = 1;
-            // 
-            // FormCalendar2
+            // FormCalendarFolgas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(879, 695);
-            this.Controls.Add(this.dateTimePicker1);
+            this.ClientSize = new System.Drawing.Size(631, 648);
             this.Controls.Add(this.monthCalendar1);
-            this.Name = "FormCalendar2";
+            this.Name = "FormCalendarFolgas";
             this.Text = "Folga";
             this.ResumeLayout(false);
 
@@ -62,6 +54,5 @@
         private Panel panel2;
         private Panel panel3;
         private CustomControls.MonthCalendar monthCalendar1;
-        private DateTimePicker dateTimePicker1;
     }
 }

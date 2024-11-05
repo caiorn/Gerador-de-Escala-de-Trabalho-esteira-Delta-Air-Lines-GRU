@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "escalaDelta", "escalaDelta\
 		{617059FF-8850-41EC-BEA2-87DF7736C888} = {617059FF-8850-41EC-BEA2-87DF7736C888}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonthCalendarMark", "MonthCalendarMark\MonthCalendarMark.csproj", "{617059FF-8850-41EC-BEA2-87DF7736C888}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonthCalendarMark", "MonthCalendarMark\MonthCalendarMark.csproj", "{617059FF-8850-41EC-BEA2-87DF7736C888}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

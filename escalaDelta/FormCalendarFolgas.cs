@@ -1,4 +1,5 @@
-﻿using escalaDelta.Utils;
+﻿using CustomControls;
+using escalaDelta.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,8 +22,35 @@ namespace escalaDelta {
             InitializeComponent();
 
             monthCalendar1.Culture = new System.Globalization.CultureInfo("pt-BR");
-            monthCalendar1.ViewStart = new DateTime(dateTimePicker1.Value.Year, 01, 01);
         }
 
+        private void PintarDiasFolgas(DateTime dataFolgaUnica) {
+            this.monthCalendar1.BoldedDatesCollection.Clear();
+
+            var cat1 = new BoldedDateCategory("Vacation") { ForeColor = Color.Black, BackColorStart = Color.Salmon };
+
+
+            DateTime dataFolgaStart = dataFolgaUnica;
+            DateTime dataFimContador = dataFolgaStart.AddYears(3);
+
+            this.monthCalendar1.BeginUpdate();
+            while (dataFolgaStart <= dataFimContador) {
+                this.monthCalendar1.BoldedDatesCollection.Add(new BoldedDate { Category = cat1, Value = dataFolgaStart });
+                dataFolgaStart = dataFolgaStart.AddDays(7);
+                this.monthCalendar1.BoldedDatesCollection.Add(new BoldedDate { Category = cat1, Value = dataFolgaStart });
+                dataFolgaStart = dataFolgaStart.AddDays(1);
+                this.monthCalendar1.BoldedDatesCollection.Add(new BoldedDate { Category = cat1, Value = dataFolgaStart });
+                dataFolgaStart = dataFolgaStart.AddDays(7);
+            }
+            this.monthCalendar1.EndUpdate();
+
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e) {
+        }
+
+        private void monthCalendar1_DateSelected(object sender, DateRangeEventArgs e) {
+            PintarDiasFolgas(e.Start);
+        }
     }
 }
