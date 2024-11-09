@@ -1,6 +1,6 @@
 # Rotating Work Schedule Generator
 
-Este projeto foi feito a fim de auxiliar o trabalho gerando escala de trabalho rotativa considerando folgas, férias, ausências, evitando sobrecarregar os colaboradores em apenas um local de trabalho. O projeto também possui um formulário de previsão de folgas, que é baseado em ciclos 6x1 e 6x2, a fim dos colaboradores terem ciência de suas respectivas folgas futuramente.
+Este projeto foi feito a fim de auxiliar o trabalho gerando escala de trabalho rotativa considerando folgas, férias, ausências, evitando sobrecarregar os colaboradores em apenas um local de trabalho. O projeto também possui um formulário de previsão de folgas, que é baseado em ciclos 6x1 6x2(trabalha 6 folga 1 e trabalha 6 folga 2, repeat), a fim dos colaboradores terem ciência de suas respectivas folgas futuramente.
 
 ## Sistema de previsão de folgas
 ![](/imagens/6x16x2.gif)
