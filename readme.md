@@ -6,7 +6,7 @@ Este projeto foi feito a fim de auxiliar o trabalho gerando escala de trabalho r
 ![](/imagens/6x16x2.gif)
 
 ## Calendário da Escala rotativa auto gerada
-![](/imagens/calendario-escala.png.jpg)
+![](/imagens/calendario-escala.png)
 
 ## Formulário de geração e edição de escala
 ![](/imagens/gerador-escala.png)
